@@ -170,8 +170,6 @@ function testmain() {
 		.text(text)
 		.words();
 
-	console.log('Fuck');
-
 	var ibreak = 0;
 	ibreak++;
 }
