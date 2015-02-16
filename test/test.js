@@ -164,11 +164,18 @@ function testmain() {
 		'hough the Preamble speaks of perfecting the "Union," and the country is called the "United States of America," ' +
 		'the Supreme Court has interpreted the institution created as a government over the people, not an agreement bet' +
 		'ween the States.[73] The phrase has also been interpreted to confirm that state nullification of any federal la' +
-		'w,[74] dissolution of the Union,[75] or secession from it,[76] are not contemplated by the Constitution.'
+		'w,[74] dissolution of the Union,[75] or secession from it,[76] are not contemplated by the Constitution.';
+
+	var canvas = document.getElementById('myCanvas');
+
 
 	var words = new WordCloudCanvas.WordCloud()
+		.canvas(canvas)
+		.width(800)
+		.height(400)
 		.text(text)
-		.words();
+		.background('lightblue')
+		.generate();
 
 	var ibreak = 0;
 	ibreak++;

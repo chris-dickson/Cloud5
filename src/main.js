@@ -3,10 +3,46 @@ var _ = require('./util');
 var WordCloudCanvas = function(attributes) {
 	this._words = {};
 	this._stopWords = {};
+	this._canvas;
+	this._width;
+	this._height;
+	this._backgroundFill;
 	_.extend(this,attributes);
 };
 
 WordCloudCanvas.prototype = _.extend(WordCloudCanvas.prototype, {
+	canvas : function(canvas) {
+		if (canvas) {
+			this._canvas = canvas;
+			this._width = canvas.width;
+			this._height = canvas.height;
+			return this;
+		} else {
+			return this._canvas;
+		}
+	},
+	width : function(width) {
+		if (width) {
+			if (this._canvas) {
+				this._canvas.width = width;
+				this._width = width;
+			}
+			return this;
+		} else {
+			return this._width;
+		}
+	},
+	height : function(height) {
+		if (height) {
+			if (this._canvas) {
+				this._canvas.height = height;
+				this._height = height;
+			}
+			return this;
+		} else {
+			return this._height;
+		}
+	},
 	text : function(text) {
 		var filtered = text.replace(/[\.,-\/#!$%\^&\*;:{}=\-_`~()]/g,"");
 		filtered = filtered.replace(/\[[0-9]*\]/g,"");
@@ -25,6 +61,15 @@ WordCloudCanvas.prototype = _.extend(WordCloudCanvas.prototype, {
 			return this;
 		} else {
 			return this._stopWords;
+		}
+	},
+
+	background : function(fillStyle) {
+		if (fillStyle) {
+			this._backgroundFill = fillStyle;
+			return this;
+		} else {
+			return this._backgroundFill;
 		}
 	},
 
@@ -52,7 +97,11 @@ WordCloudCanvas.prototype = _.extend(WordCloudCanvas.prototype, {
 	},
 
 	generate : function() {
-		// TODO:
+		var ctx = this._canvas.getContext('2d');
+		if (this._backgroundFill) {
+			ctx.fillStyle = this._backgroundFill;
+			ctx.fillRect(0, 0, this._width, this._height);
+		}
 		return this;
 	}
 });
