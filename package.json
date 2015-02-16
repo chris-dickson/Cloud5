@@ -1,0 +1,22 @@
+{
+  "name": "graphjs",
+  "version": "0.0.1",
+  "description": "A package for creating word/tag clouds in Javascript using HTML5 canvas",
+  "main": "index.js",
+  "scripts": {
+    "build": "gulp compile"
+  },
+  "author": "Chris Dickson",
+  "license": "MIT",
+  "devDependencies": {
+    "browserify": "^4.2.1",
+    "gulp": "^3.8.6",
+    "gulp-rename": "^1.2.0",
+    "gulp-uglify": "^1.0.1",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^0.1.1"
+  },
+  "dependencies": {
+    "path.js": "git://github.com/chris-dickson/pathjs"
+  }
+}
