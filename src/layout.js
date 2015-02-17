@@ -16,8 +16,6 @@ var Layout = function(attributes) {
 	this._canvas;
 	this._words;
 
-	this._initialize();
-
 	_.extend(this,attributes);
 };
 
@@ -50,9 +48,10 @@ Layout.prototype = _.extend(Layout.prototype, {
 	layout : function() {
 		this._initialize();
 		var renderInfo = {};
-		this._words.forEach(function(word) {
-			
-		});
+		if (this._words) {
+
+		}
+		return renderInfo;
 	}
 });
 
