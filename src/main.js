@@ -1,12 +1,18 @@
 var _ = require('./util');
+var Layout = require('./layout');
 
 var WordCloudCanvas = function(attributes) {
+
 	this._words = {};
 	this._stopWords = {};
+
 	this._canvas;
 	this._width;
 	this._height;
 	this._backgroundFill;
+
+	this._layout;
+
 	_.extend(this,attributes);
 };
 
@@ -29,7 +35,7 @@ WordCloudCanvas.prototype = _.extend(WordCloudCanvas.prototype, {
 			}
 			return this;
 		} else {
-			return this._width;
+			return this.width;
 		}
 	},
 	height : function(height) {
@@ -97,6 +103,12 @@ WordCloudCanvas.prototype = _.extend(WordCloudCanvas.prototype, {
 	},
 
 	generate : function() {
+		var layout = new Layout()
+			.canvas(this._canvas)
+			.words(this._words);
+
+		var renderInfo = layout.layout();
+
 		var ctx = this._canvas.getContext('2d');
 		if (this._backgroundFill) {
 			ctx.fillStyle = this._backgroundFill;
