@@ -114,6 +114,15 @@ WordCloudCanvas.prototype = _.extend(WordCloudCanvas.prototype, {
 			ctx.fillStyle = this._backgroundFill;
 			ctx.fillRect(0, 0, this._width, this._height);
 		}
+
+		Object.keys(renderInfo).forEach(function(word) {
+			var wordRenderInfo = renderInfo[word];
+			if (wordRenderInfo.x !== -1 && wordRenderInfo.y !== -1) {
+				ctx.font = wordRenderInfo.fontSize + 'px ' + wordRenderInfo.fontFamily;
+				ctx.fillStyle = 'red';
+				ctx.fillText(word,wordRenderInfo.x,wordRenderInfo.y);
+			}
+		});
 		return this;
 	}
 });

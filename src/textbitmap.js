@@ -22,7 +22,7 @@ var TextBitmap = function(attributes) {
 	this._canvas.height = 480;
 	this._context = this._canvas.getContext('2d');
 
-	document.body.appendChild(this._canvas);
+	//document.body.appendChild(this._canvas);
 
 	this._bitmap = createArray(this._canvas.width,this._canvas.height);
 	for (var i = 0; i < this._canvas.width; i++) {
@@ -85,23 +85,48 @@ TextBitmap.prototype = _.extend(TextBitmap.prototype, {
 		}
 
 		var trimmedBooleanBitmap = createArray(maxX-minX,maxY-minY);
-		for (var x = minX; x < maxX; x++) {
-			for (var y = minY; y < minY; y++) {
-				trimmedBooleanBitmap[x][y] = booleanBitmap[x][y];
+		for (var x = 0; x < maxX-minX; x++) {
+			for (var y = 0; y < maxY-minY; y++) {
+				trimmedBooleanBitmap[x][y] = booleanBitmap[minX+x][minY+y];
 			}
 		}
 
 		var renderInfo = {
 			width : maxX-minX,
 			height : maxY-minY,
-			bitmap : trimmedBooleanBitmap
+			bitmap : trimmedBooleanBitmap,
+			fontSize : fontHeight,
+			fontFamily : fontFamily
 		};
 
 		return renderInfo;
 	},
-	intersects : function(b1,b2) {
-		// TODO:
+	intersects : function(renderInfo,bitmap) {
 
+		if (renderInfo.x + renderInfo.width > bitmap.length) {
+			return true;
+		}
+
+		if (renderInfo.y + renderInfo.height > bitmap[0].length) {
+			return true;
+		}
+
+
+		var doesItFit = true;
+
+		for (var u = 0; u < renderInfo.bitmap.length && doesItFit; u++) {
+			for (var v = 0; v < renderInfo.bitmap[u].length && doesItFit; v++) {
+				var x = renderInfo.x + u;
+				var y = renderInfo.y + v;
+
+				var a = renderInfo.bitmap[u][v];
+				var b = bitmap[x][y];
+
+				doesItFit &= !(a && b);
+			}
+		}
+
+		return !doesItFit;
 	}
 });
 

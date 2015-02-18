@@ -48,16 +48,77 @@ Layout.prototype = _.extend(Layout.prototype, {
 			return this._words;
 		}
 	},
+
+
 	layout : function() {
 		this._initialize();
 		var renderInfo = {};
 		if (this._words) {
 			var that = this;
+
+			var minCount = Number.MAX_VALUE;
+			var maxCount = 0;
+
 			Object.keys(this._words).forEach(function(word) {
-				var bitmap = that._textBitmapper.create(word,20,'Calibri');
+				minCount = Math.min(that._words[word],minCount);
+				maxCount = Math.max(that._words[word],maxCount);
+			});
+
+
+			var minFontSize = 20;
+			var maxFontSize = 100;
+			Object.keys(this._words).forEach(function(word) {
+
+				var t = (that._words[word] - minCount)/(maxCount-minCount);
+				var fontSize =_.step(minFontSize,maxFontSize,t);
+
+				var bitmap = that._textBitmapper.create(word,fontSize,'Calibri');
 				renderInfo[word] = bitmap;
 			});
 		}
+
+		var sortedWordArray = Object.keys(this._words).sort(function(w1,w2) {
+			return that._words[w2]-that._words[w1];
+		});
+
+		sortedWordArray.forEach(function(word) {
+			var placed = false;
+			var attempts = 30;
+			while (!placed && attempts > 0) {
+				var x = Math.floor(Math.random() * that._canvas.width)
+				var y = Math.floor(Math.random() * that._canvas.height);
+
+				renderInfo[word].x = x;
+				renderInfo[word].y = y;
+
+				var ctx = that._canvas.getContext('2d');
+				ctx.font = renderInfo[word].fontSize + 'px ' + renderInfo[word].fontFamily;
+				ctx.fillStyle = 'red';
+				ctx.fillText(word,renderInfo[word].x,renderInfo[word].y);
+
+				if (!that._textBitmapper.intersects(renderInfo[word],that._bitmap)) {
+					placed = true;
+
+					for (var x = renderInfo[word].x; x < renderInfo[word].x + renderInfo[word].width; x++) {
+						for (var y = renderInfo[word].y; y < renderInfo[word].y + renderInfo[word].height; y++) {
+							that._bitmap[x][y] = true;
+						}
+					}
+
+
+					var ibreak = 0;
+					ibreak++;
+
+				} else {
+					attempts--;
+				}
+			}
+			if (!placed) {
+				renderInfo[word].x = -1;
+				renderInfo[word].y = -1;
+			}
+		});
+
 		return renderInfo;
 	}
 });
