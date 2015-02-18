@@ -84,7 +84,7 @@ WordCloudCanvas.prototype = _.extend(WordCloudCanvas.prototype, {
 			var that = this;
 			words.forEach(function (raw) {
 				var word = raw.trim().toLowerCase();
-				if (that._stopWords[word]) {
+				if (that._stopWords[word] || word === '') {
 					return;
 				}
 

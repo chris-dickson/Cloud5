@@ -1,4 +1,5 @@
 var _ = require('./util');
+var TextBitmap = require('./textbitmap');
 
 function createArray(length) {
 	var arr = new Array(length || 0),
@@ -15,12 +16,14 @@ function createArray(length) {
 var Layout = function(attributes) {
 	this._canvas;
 	this._words;
+	this._textBitmapper;
 
 	_.extend(this,attributes);
 };
 
 Layout.prototype = _.extend(Layout.prototype, {
 	_initialize : function() {
+		this._textBitmapper = new TextBitmap();
 		this._bitmap = createArray(this._canvas.width,this._canvas.height);
 		for (var i = 0; i < this._canvas.width; i++) {
 			for (var j = 0; j < this._canvas.height; j++) {
@@ -49,7 +52,11 @@ Layout.prototype = _.extend(Layout.prototype, {
 		this._initialize();
 		var renderInfo = {};
 		if (this._words) {
-
+			var that = this;
+			Object.keys(this._words).forEach(function(word) {
+				var bitmap = that._textBitmapper.create(word,20,'Calibri');
+				renderInfo[word] = bitmap;
+			});
 		}
 		return renderInfo;
 	}
