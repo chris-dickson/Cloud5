@@ -16,6 +16,7 @@ function createArray(length) {
 var Layout = function(attributes) {
 	this._canvas;
 	this._words;
+	this._bitmap;
 	this._textBitmapper;
 
 	_.extend(this,attributes);
@@ -49,6 +50,9 @@ Layout.prototype = _.extend(Layout.prototype, {
 		}
 	},
 
+	bitmap : function() {
+		return this._textBitmapper.toCanvas(this._bitmap);
+	},
 
 	layout : function() {
 		this._initialize();
@@ -91,11 +95,6 @@ Layout.prototype = _.extend(Layout.prototype, {
 				renderInfo[word].x = x;
 				renderInfo[word].y = y;
 
-				var ctx = that._canvas.getContext('2d');
-				ctx.font = renderInfo[word].fontSize + 'px ' + renderInfo[word].fontFamily;
-				ctx.fillStyle = 'red';
-				ctx.fillText(word,renderInfo[word].x,renderInfo[word].y);
-
 				if (!that._textBitmapper.intersects(renderInfo[word],that._bitmap)) {
 					placed = true;
 
@@ -104,11 +103,7 @@ Layout.prototype = _.extend(Layout.prototype, {
 							that._bitmap[x][y] = true;
 						}
 					}
-
-
-					var ibreak = 0;
-					ibreak++;
-
+					renderInfo[word].y += renderInfo[word].height;
 				} else {
 					attempts--;
 				}

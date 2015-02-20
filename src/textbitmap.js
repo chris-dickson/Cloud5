@@ -127,6 +127,28 @@ TextBitmap.prototype = _.extend(TextBitmap.prototype, {
 		}
 
 		return !doesItFit;
+	},
+	toCanvas : function(bitmap) {
+		var canvas = document.createElement('canvas');
+		var ctx = canvas.getContext('2d');
+
+		var width = bitmap.length;
+		var height = bitmap[0].length;
+
+		canvas.width = width
+		canvas.height = height;
+
+		var imageData = ctx.createImageData(canvas.width,canvas.height);
+		var pixelData = [];
+		for (var i = 0; i < width; i++) {
+			for (var j = 0; j < height; j++) {
+				var color = bitmap[i][j] ? [255,255,255,1] : [0,0,0,1];
+				pixelData.concat(color);
+			}
+		}
+		imageData.data = pixelData;
+		ctx.putImageData(imageData,0,0);
+		return canvas;
 	}
 });
 

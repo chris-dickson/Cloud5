@@ -120,7 +120,9 @@ WordCloudCanvas.prototype = _.extend(WordCloudCanvas.prototype, {
 			if (wordRenderInfo.x !== -1 && wordRenderInfo.y !== -1) {
 				ctx.font = wordRenderInfo.fontSize + 'px ' + wordRenderInfo.fontFamily;
 				ctx.fillStyle = 'red';
+				ctx.strokeStyle = 'green';
 				ctx.fillText(word,wordRenderInfo.x,wordRenderInfo.y);
+//				ctx.strokeRect(wordRenderInfo.x,wordRenderInfo.y-wordRenderInfo.height,wordRenderInfo.width,wordRenderInfo.height);
 			}
 		});
 		return this;
