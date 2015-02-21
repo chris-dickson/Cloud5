@@ -175,6 +175,9 @@ function testmain() {
 		.canvas(canvas)
 		.width(800)
 		.height(400)
+		.font('Helvetica')
+		.minFontSize(10)
+		.maxFontSize(250)
 		.text(text)
 		.background('lightblue')
 		.onWordOver(function(word) {

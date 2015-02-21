@@ -107,35 +107,83 @@ WordCloudCanvas.prototype = _.extend(WordCloudCanvas.prototype, {
 		return this;
 	},
 
+	font : function(font) {
+		if (font) {
+			this._font = font;
+			return this;
+		} else {
+			return this._font;
+		}
+	},
+
+	minFontSize : function(minFontSize) {
+		if (minFontSize) {
+			this._minFontSize = minFontSize;
+			return this;
+		} else {
+			return this._minFontSize;
+		}
+	},
+
+	maxFontSize : function(maxFontSize) {
+		if (maxFontSize) {
+			this._maxFontSize = maxFontSize;
+			return this;
+		} else {
+			return this._maxFontSize;
+		}
+	},
+
+	colors : function(colors) {
+		if (colors) {
+			this._colors = colors;
+			return this;
+		} else {
+			return this._colors;
+		}
+	},
+
 	generate : function() {
 		var layoutAttributes = {};
 		if (this.debug) {
 			layoutAttributes.debug = true;
 		}
+		if (this._font) {
+			layoutAttributes.font = this._font;
+		}
+		if (this._minFontSize) {
+			layoutAttributes.minFontSize = this._minFontSize;
+		}
+		if (this._maxFontSize) {
+			layoutAttributes.maxFontSize = this._maxFontSize;
+		}
+		if (this._colors) {
+			layoutAttributes.colors = this._colors;
+		}
 
-		var layout = new Layout(layoutAttributes)
+		this._layout = new Layout(layoutAttributes)
 			.canvas(this._canvas)
 			.words(this._words)
 			.onWordOver(this._onWordOver);
 
-		var renderInfo = layout.layout();
+		var renderInfo = this._layout.layout();
 
 		var ctx = this._canvas.getContext('2d');
-		if (this._backgroundFill) {
-			ctx.fillStyle = this._backgroundFill;
-			ctx.fillRect(0, 0, this._width, this._height);
-		}
+		ctx.fillStyle = this._backgroundFill || 'white';
+		ctx.fillRect(0, 0, this._width, this._height);
+
 
 		var that = this;
 		Object.keys(renderInfo).forEach(function(word) {
 			var wordRenderInfo = renderInfo[word];
 			if (wordRenderInfo.x !== -1 && wordRenderInfo.y !== -1) {
 				ctx.font = wordRenderInfo.fontSize + 'px ' + wordRenderInfo.fontFamily;
+
 				ctx.fillStyle = 'red';
-				ctx.strokeStyle = 'green';
 				ctx.fillText(word,wordRenderInfo.x,wordRenderInfo.y);
 
 				if (that.debug) {
+					ctx.strokeStyle = 'green';
 					ctx.strokeRect(wordRenderInfo.x + wordRenderInfo.bb.offsetX, wordRenderInfo.y + wordRenderInfo.bb.offsetY, wordRenderInfo.bb.width, wordRenderInfo.bb.height);
 				}
 			}

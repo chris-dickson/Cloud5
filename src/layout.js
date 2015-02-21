@@ -81,14 +81,14 @@ Layout.prototype = _.extend(Layout.prototype, {
 			});
 
 
-			var minFontSize = 10;
-			var maxFontSize = 200;
+			var minFontSize = this.minFontSize || 10;
+			var maxFontSize = this.maxFontSize || 200;
 			Object.keys(this._words).forEach(function(word) {
 
 				var t = (that._words[word] - minCount)/(maxCount-minCount);
 				var fontSize =_.step(minFontSize,maxFontSize,t);
 
-				var bitmap = that._textBitmapper.create(word,fontSize,'Calibri');
+				var bitmap = that._textBitmapper.create(word,fontSize,that.font || 'Calibri');
 				renderInfo[word] = bitmap;
 			});
 		}
