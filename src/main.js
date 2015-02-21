@@ -122,7 +122,7 @@ WordCloudCanvas.prototype = _.extend(WordCloudCanvas.prototype, {
 				ctx.fillStyle = 'red';
 				ctx.strokeStyle = 'green';
 				ctx.fillText(word,wordRenderInfo.x,wordRenderInfo.y);
-//				ctx.strokeRect(wordRenderInfo.x,wordRenderInfo.y-wordRenderInfo.height,wordRenderInfo.width,wordRenderInfo.height);
+//				ctx.strokeRect(wordRenderInfo.x + wordRenderInfo.bb.offsetX, wordRenderInfo.y + wordRenderInfo.bb.offsetY, wordRenderInfo.bb.width, wordRenderInfo.bb.height);
 			}
 		});
 		return this;

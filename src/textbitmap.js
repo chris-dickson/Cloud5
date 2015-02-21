@@ -44,6 +44,7 @@ TextBitmap.prototype = _.extend(TextBitmap.prototype, {
 
 
 
+
 		var textRenderX = 5;
 		var textRenderY = Math.floor(this._canvas.height/2);
 
@@ -54,7 +55,7 @@ TextBitmap.prototype = _.extend(TextBitmap.prototype, {
 		var width = ctx.measureText(text).width;
 
 		var startX = textRenderX;
-		var startY = this._canvas.height/2 - fontHeight - 2;
+		var startY = textRenderY - fontHeight - 2;
 		var endX = startX + width + textRenderX;
 		var endY = startY + fontHeight + fontHeight*0.5;
 
@@ -66,6 +67,7 @@ TextBitmap.prototype = _.extend(TextBitmap.prototype, {
 		var x = 0;
 		var y = 0;
 		for (var i = 0; i < imageData.data.length; i+=4) {
+
 			booleanBitmap[x][y] =  imageData.data[i] !== 0;
 			x++;
 			if (x === imageData.width) {
@@ -97,9 +99,27 @@ TextBitmap.prototype = _.extend(TextBitmap.prototype, {
 			}
 		}
 
+		ctx.strokeStyle = 'yellow';
+		ctx.strokeRect(startX,startY,endX-startX,endY-startY);
+
+		ctx.strokeStyle = 'red';
+		ctx.strokeRect(textRenderX,textRenderY,this._canvas.width, this._canvas.height);
+
+		var bbWidth = maxX-minX;
+		var bbHeight = maxY-minY;
+		var bbOffsetX = -(textRenderX - (startX + minX ));
+		var bbOffsetY = -(textRenderY - (startY + minY));
+
+		ctx.strokeStyle = 'green';
+		ctx.strokeRect(textRenderX + bbOffsetX, textRenderY + bbOffsetY, bbWidth, bbHeight);
+
 		var renderInfo = {
-			width : maxX-minX,
-			height : maxY-minY,
+			bb : {
+				offsetX : bbOffsetX,
+				offsetY : bbOffsetY,
+				width : bbWidth,
+				height : bbHeight
+			},
 			bitmap : trimmedBooleanBitmap,
 			fontSize : fontHeight,
 			fontFamily : fontFamily
@@ -107,54 +127,31 @@ TextBitmap.prototype = _.extend(TextBitmap.prototype, {
 
 		return renderInfo;
 	},
-	intersects : function(renderInfo,bitmap) {
+	fits : function(renderInfo,bitmap) {
 
-		if (renderInfo.x + renderInfo.width > bitmap.length) {
-			return true;
-		}
+		var startX = renderInfo.x + renderInfo.bb.offsetX;
+		var startY = renderInfo.y + renderInfo.bb.offsetY;
 
-		if (renderInfo.y + renderInfo.height > bitmap[0].length) {
-			return true;
-		}
+		var bitmapWidth = bitmap.length;
+		var bitmapHeight = bitmap[0].length;
 
+		var hitEdge = startX < 0 || startY < 0;
+		var hitOther = false;
+		var doesntFit = hitEdge || hitOther;
 
-		var doesItFit = true;
-
-		for (var u = 0; u < renderInfo.bitmap.length && doesItFit; u++) {
-			for (var v = 0; v < renderInfo.bitmap[u].length && doesItFit; v++) {
-				var x = renderInfo.x + u;
-				var y = renderInfo.y + v;
-
-				var a = renderInfo.bitmap[u][v];
-				var b = bitmap[x][y];
-
-				doesItFit &= !(a && b);
+		for (var i = 0; i < renderInfo.bb.width && !doesntFit; i++) {
+			var u = startX + i;
+			for (var j = 0; j < renderInfo.bb.height && !doesntFit; j++) {
+				var v = startY + j;
+				if (u >= bitmapWidth || v >= bitmapHeight) {
+					hitEdge = true;
+				} else if (bitmap[u][v]) {
+					hitOther = true;
+				}
+				doesntFit = hitEdge || hitOther;
 			}
 		}
-
-		return !doesItFit;
-	},
-	toCanvas : function(bitmap) {
-		var canvas = document.createElement('canvas');
-		var ctx = canvas.getContext('2d');
-
-		var width = bitmap.length;
-		var height = bitmap[0].length;
-
-		canvas.width = width;
-		canvas.height = height;
-
-		var imageData = ctx.createImageData(canvas.width,canvas.height);
-		var pixelData = [];
-		for (var i = 0; i < width; i++) {
-			for (var j = 0; j < height; j++) {
-				var color = bitmap[i][j] ? [255,255,255,1] : [0,0,0,1];
-				pixelData.concat(color);
-			}
-		}
-		imageData.data = pixelData;
-		ctx.putImageData(imageData,0,0);
-		return canvas;
+		return !doesntFit;
 	}
 });
 

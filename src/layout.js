@@ -71,8 +71,8 @@ Layout.prototype = _.extend(Layout.prototype, {
 			});
 
 
-			var minFontSize = 20;
-			var maxFontSize = 100;
+			var minFontSize = 10;
+			var maxFontSize = 200;
 			Object.keys(this._words).forEach(function(word) {
 
 				var t = (that._words[word] - minCount)/(maxCount-minCount);
@@ -87,9 +87,25 @@ Layout.prototype = _.extend(Layout.prototype, {
 			return that._words[w2]-that._words[w1];
 		});
 
+		function debugDrawAll(ctx,w,h) {
+			ctx.fillStyle = 'white';
+			ctx.fillRect(0,0,w,h);
+			Object.keys(renderInfo).forEach(function(word) {
+				var wordRenderInfo = renderInfo[word];
+				if (wordRenderInfo.x !== undefined && wordRenderInfo.x !== -1 && wordRenderInfo.y !== undefined && wordRenderInfo.y !== -1) {
+					ctx.font = wordRenderInfo.fontSize + 'px ' + wordRenderInfo.fontFamily;
+					ctx.fillStyle = 'red';
+					ctx.strokeStyle = 'green';
+					ctx.fillText(word,wordRenderInfo.x,wordRenderInfo.y);
+					ctx.strokeRect(wordRenderInfo.x + wordRenderInfo.bb.offsetX, wordRenderInfo.y + wordRenderInfo.bb.offsetY, wordRenderInfo.bb.width, wordRenderInfo.bb.height);
+				}
+			});
+		}
+
 		sortedWordArray.forEach(function(word) {
 			var placed = false;
-			var attempts = 30;
+			var attempts = 100;
+			debugDrawAll(that._canvas.getContext('2d'),that._canvas.width, that._canvas.height);
 			while (!placed && attempts > 0) {
 				var x = Math.floor(Math.random() * that._canvas.width);
 				var y = Math.floor(Math.random() * that._canvas.height);
@@ -97,15 +113,21 @@ Layout.prototype = _.extend(Layout.prototype, {
 				renderInfo[word].x = x;
 				renderInfo[word].y = y;
 
-				if (!that._textBitmapper.intersects(renderInfo[word],that._bitmap)) {
+				if (that._textBitmapper.fits(renderInfo[word],that._bitmap)) {
 					placed = true;
 
-					for (x = renderInfo[word].x; x < renderInfo[word].x + renderInfo[word].width; x++) {
-						for (y = renderInfo[word].y; y < renderInfo[word].y + renderInfo[word].height; y++) {
-							that._bitmap[x][y] = true;
+					var bitmapWidth = renderInfo[word].bitmap.length;
+					var bitmapHeight = renderInfo[word].bitmap[0].length;
+
+					for (var i = 0; i < bitmapWidth; i++) {
+						for (var j = 0; j < bitmapHeight; j++) {
+							var u = renderInfo[word].x + renderInfo[word].bb.offsetX + i;
+							var v = renderInfo[word].y + renderInfo[word].bb.offsetY + j;
+
+							that._bitmap[u][v] |= renderInfo[word].bitmap[i][j];
 						}
 					}
-					renderInfo[word].y += renderInfo[word].height;
+
 				} else {
 					attempts--;
 				}
