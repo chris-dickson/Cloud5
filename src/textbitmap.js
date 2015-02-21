@@ -6,15 +6,18 @@ function createArray(length) {
 
 	if (arguments.length > 1) {
 		var args = Array.prototype.slice.call(arguments, 1);
-		while(i--) arr[length-1 - i] = createArray.apply(this, args);
+		while(i--) {
+			arr[length - 1 - i] = createArray.apply(this, args);
+		}
 	}
+
 
 	return arr;
 }
 
 var TextBitmap = function(attributes) {
-	this._canvas;
-	this._context;
+	this._canvas = null;
+	this._context = null;
 	_.extend(this,attributes);
 
 	this._canvas = document.createElement('canvas');
@@ -22,7 +25,7 @@ var TextBitmap = function(attributes) {
 	this._canvas.height = 480;
 	this._context = this._canvas.getContext('2d');
 
-	//document.body.appendChild(this._canvas);
+	document.body.appendChild(this._canvas);
 
 	this._bitmap = createArray(this._canvas.width,this._canvas.height);
 	for (var i = 0; i < this._canvas.width; i++) {
@@ -39,17 +42,20 @@ TextBitmap.prototype = _.extend(TextBitmap.prototype, {
 		ctx.fillStyle = 'black';
 		ctx.fillRect(0,0,this._canvas.width,this._canvas.height);
 
-		var offsetX = 5;
+
+
+		var textRenderX = 5;
+		var textRenderY = Math.floor(this._canvas.height/2);
 
 		ctx.fillStyle = 'white';
 		ctx.font = fontHeight + 'px ' + fontFamily;
-		ctx.fillText(text,offsetX,this._canvas.height/2);
+		ctx.fillText(text,textRenderX,textRenderY);
 
 		var width = ctx.measureText(text).width;
 
-		var startX = offsetX;
+		var startX = textRenderX;
 		var startY = this._canvas.height/2 - fontHeight - 2;
-		var endX = startX + width + offsetX;
+		var endX = startX + width + textRenderX;
 		var endY = startY + fontHeight + fontHeight*0.5;
 
 
@@ -73,8 +79,8 @@ TextBitmap.prototype = _.extend(TextBitmap.prototype, {
 		var minY = Number.MAX_VALUE;
 		var maxX = -Number.MAX_VALUE;
 		var maxY = -Number.MAX_VALUE;
-		for (var x = 0; x < booleanBitmap.length; x++) {
-			for (var y = 0; y < booleanBitmap[x].length; y++) {
+		for (x = 0; x < booleanBitmap.length; x++) {
+			for (y = 0; y < booleanBitmap[x].length; y++) {
 				if (booleanBitmap[x][y]) {
 					minX = Math.min(minX,x);
 					minY = Math.min(minY,y);
@@ -85,8 +91,8 @@ TextBitmap.prototype = _.extend(TextBitmap.prototype, {
 		}
 
 		var trimmedBooleanBitmap = createArray(maxX-minX,maxY-minY);
-		for (var x = 0; x < maxX-minX; x++) {
-			for (var y = 0; y < maxY-minY; y++) {
+		for (x = 0; x < maxX-minX; x++) {
+			for (y = 0; y < maxY-minY; y++) {
 				trimmedBooleanBitmap[x][y] = booleanBitmap[minX+x][minY+y];
 			}
 		}
@@ -135,7 +141,7 @@ TextBitmap.prototype = _.extend(TextBitmap.prototype, {
 		var width = bitmap.length;
 		var height = bitmap[0].length;
 
-		canvas.width = width
+		canvas.width = width;
 		canvas.height = height;
 
 		var imageData = ctx.createImageData(canvas.width,canvas.height);

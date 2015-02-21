@@ -6,12 +6,12 @@ var WordCloudCanvas = function(attributes) {
 	this._words = {};
 	this._stopWords = {};
 
-	this._canvas;
-	this._width;
-	this._height;
-	this._backgroundFill;
+	this._canvas = null;
+	this._width = null;
+	this._height = null;
+	this._backgroundFill = null;
 
-	this._layout;
+	this._layout = null;
 
 	_.extend(this,attributes);
 };
@@ -50,9 +50,9 @@ WordCloudCanvas.prototype = _.extend(WordCloudCanvas.prototype, {
 		}
 	},
 	text : function(text) {
-		var filtered = text.replace(/[\.,-\/#!$%\^&\*;:{}=\-_`~()]/g,"");
-		filtered = filtered.replace(/\[[0-9]*\]/g,"");
-		filtered = filtered.replace(/[\t+\[\]]/g,"");
+		var filtered = text.replace(/[\.,-\/#!$%\^&\*;:{}=\-_`~()]/g,'');
+		filtered = filtered.replace(/\[[0-9]*\]/g,'');
+		filtered = filtered.replace(/[\t+\[\]]/g,'');
 		var words = filtered.split(' ');
 		this.words(words);
 		return this;

@@ -7,17 +7,19 @@ function createArray(length) {
 
 	if (arguments.length > 1) {
 		var args = Array.prototype.slice.call(arguments, 1);
-		while(i--) arr[length-1 - i] = createArray.apply(this, args);
+		while(i--) {
+			arr[length-1 - i] = createArray.apply(this, args);
+		}
 	}
 
 	return arr;
 }
 
 var Layout = function(attributes) {
-	this._canvas;
-	this._words;
-	this._bitmap;
-	this._textBitmapper;
+	this._canvas = null;
+	this._words = null;
+	this._bitmap = null;
+	this._textBitmapper = null;
 
 	_.extend(this,attributes);
 };
@@ -89,7 +91,7 @@ Layout.prototype = _.extend(Layout.prototype, {
 			var placed = false;
 			var attempts = 30;
 			while (!placed && attempts > 0) {
-				var x = Math.floor(Math.random() * that._canvas.width)
+				var x = Math.floor(Math.random() * that._canvas.width);
 				var y = Math.floor(Math.random() * that._canvas.height);
 
 				renderInfo[word].x = x;
@@ -98,8 +100,8 @@ Layout.prototype = _.extend(Layout.prototype, {
 				if (!that._textBitmapper.intersects(renderInfo[word],that._bitmap)) {
 					placed = true;
 
-					for (var x = renderInfo[word].x; x < renderInfo[word].x + renderInfo[word].width; x++) {
-						for (var y = renderInfo[word].y; y < renderInfo[word].y + renderInfo[word].height; y++) {
+					for (x = renderInfo[word].x; x < renderInfo[word].x + renderInfo[word].width; x++) {
+						for (y = renderInfo[word].y; y < renderInfo[word].y + renderInfo[word].height; y++) {
 							that._bitmap[x][y] = true;
 						}
 					}
