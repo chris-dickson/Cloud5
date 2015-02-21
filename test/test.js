@@ -171,7 +171,7 @@ function testmain() {
 	document.body.appendChild(overWordElement);
 
 
-	var words = new WordCloudCanvas.WordCloud()
+	var words = new WordCloudCanvas()
 		.canvas(canvas)
 		.width(800)
 		.height(400)

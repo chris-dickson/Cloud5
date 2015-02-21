@@ -193,5 +193,4 @@ WordCloudCanvas.prototype = _.extend(WordCloudCanvas.prototype, {
 });
 
 
-exports.Extend = _.extend;
-exports.WordCloud = WordCloudCanvas;
+module.exports = WordCloudCanvas;
