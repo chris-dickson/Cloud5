@@ -167,6 +167,8 @@ function testmain() {
 		'w,[74] dissolution of the Union,[75] or secession from it,[76] are not contemplated by the Constitution.';
 
 	var canvas = document.getElementById('myCanvas');
+	var overWordElement = document.createElement('span');
+	document.body.appendChild(overWordElement);
 
 
 	var words = new WordCloudCanvas.WordCloud()
@@ -175,7 +177,13 @@ function testmain() {
 		.height(400)
 		.text(text)
 		.background('lightblue')
+		.onWordOver(function(word) {
+			if (word) {
+				overWordElement.innerHTML = word;
+			}
+		})
 		.generate();
+
 
 	var ibreak = 0;
 	ibreak++;

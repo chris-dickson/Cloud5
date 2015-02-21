@@ -56,6 +56,11 @@ Layout.prototype = _.extend(Layout.prototype, {
 		return this._textBitmapper.toCanvas(this._bitmap);
 	},
 
+	onWordOver : function(handler) {
+		this._onWordOver = handler;
+		return this;
+	},
+
 	layout : function() {
 		this._initialize();
 		var renderInfo = {};
@@ -105,7 +110,7 @@ Layout.prototype = _.extend(Layout.prototype, {
 		sortedWordArray.forEach(function(word) {
 			var placed = false;
 			var attempts = 100;
-			debugDrawAll(that._canvas.getContext('2d'),that._canvas.width, that._canvas.height);
+			//debugDrawAll(that._canvas.getContext('2d'),that._canvas.width, that._canvas.height);
 			while (!placed && attempts > 0) {
 				var x = Math.floor(Math.random() * that._canvas.width);
 				var y = Math.floor(Math.random() * that._canvas.height);
@@ -124,7 +129,9 @@ Layout.prototype = _.extend(Layout.prototype, {
 							var u = renderInfo[word].x + renderInfo[word].bb.offsetX + i;
 							var v = renderInfo[word].y + renderInfo[word].bb.offsetY + j;
 
-							that._bitmap[u][v] |= renderInfo[word].bitmap[i][j];
+							if (renderInfo[word].bitmap[i][j]) {
+								that._bitmap[u][v] = word;
+							}
 						}
 					}
 
@@ -137,6 +144,21 @@ Layout.prototype = _.extend(Layout.prototype, {
 				renderInfo[word].y = -1;
 			}
 		});
+
+		function onMouseMove(e) {
+			var x = e.offsetX;
+			var y = e.offsetY;
+
+			var word = that._bitmap[x][y];
+			if (word) {
+				if (that._onWordOver) {
+					that._onWordOver(word);
+				}
+			}
+		}
+
+		this._canvas.onmousemove = onMouseMove;
+
 
 		return renderInfo;
 	}

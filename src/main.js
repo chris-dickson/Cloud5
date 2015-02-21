@@ -10,6 +10,7 @@ var WordCloudCanvas = function(attributes) {
 	this._width = null;
 	this._height = null;
 	this._backgroundFill = null;
+	this._onWordOver = null;
 
 	this._layout = null;
 
@@ -102,10 +103,16 @@ WordCloudCanvas.prototype = _.extend(WordCloudCanvas.prototype, {
 		}
 	},
 
+	onWordOver : function(handler) {
+		this._onWordOver = handler;
+		return this;
+	},
+
 	generate : function() {
 		var layout = new Layout()
 			.canvas(this._canvas)
-			.words(this._words);
+			.words(this._words)
+			.onWordOver(this._onWordOver);
 
 		var renderInfo = layout.layout();
 
