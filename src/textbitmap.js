@@ -25,7 +25,9 @@ var TextBitmap = function(attributes) {
 	this._canvas.height = 480;
 	this._context = this._canvas.getContext('2d');
 
-	//document.body.appendChild(this._canvas);
+	if (this.debug) {
+		document.body.appendChild(this._canvas);
+	}
 
 	this._bitmap = createArray(this._canvas.width,this._canvas.height);
 	for (var i = 0; i < this._canvas.width; i++) {
@@ -99,8 +101,10 @@ TextBitmap.prototype = _.extend(TextBitmap.prototype, {
 			}
 		}
 
-		//ctx.strokeStyle = 'yellow';
-		//ctx.strokeRect(startX,startY,endX-startX,endY-startY);
+		if (this.debug) {
+			ctx.strokeStyle = 'yellow';
+			ctx.strokeRect(startX,startY,endX-startX,endY-startY);
+		}
 
 		ctx.strokeStyle = 'red';
 		ctx.strokeRect(textRenderX,textRenderY,this._canvas.width, this._canvas.height);
@@ -110,8 +114,10 @@ TextBitmap.prototype = _.extend(TextBitmap.prototype, {
 		var bbOffsetX = -(textRenderX - (startX + minX ));
 		var bbOffsetY = -(textRenderY - (startY + minY));
 
-		//ctx.strokeStyle = 'green';
-		//ctx.strokeRect(textRenderX + bbOffsetX, textRenderY + bbOffsetY, bbWidth, bbHeight);
+		if (this.debug) {
+			ctx.strokeStyle = 'green';
+			ctx.strokeRect(textRenderX + bbOffsetX, textRenderY + bbOffsetY, bbWidth, bbHeight);
+		}
 
 		var renderInfo = {
 			bb : {

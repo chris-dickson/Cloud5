@@ -11,7 +11,6 @@ var WordCloudCanvas = function(attributes) {
 	this._height = null;
 	this._backgroundFill = null;
 	this._onWordOver = null;
-
 	this._layout = null;
 
 	_.extend(this,attributes);
@@ -109,7 +108,12 @@ WordCloudCanvas.prototype = _.extend(WordCloudCanvas.prototype, {
 	},
 
 	generate : function() {
-		var layout = new Layout()
+		var layoutAttributes = {};
+		if (this.debug) {
+			layoutAttributes.debug = true;
+		}
+
+		var layout = new Layout(layoutAttributes)
 			.canvas(this._canvas)
 			.words(this._words)
 			.onWordOver(this._onWordOver);
@@ -122,6 +126,7 @@ WordCloudCanvas.prototype = _.extend(WordCloudCanvas.prototype, {
 			ctx.fillRect(0, 0, this._width, this._height);
 		}
 
+		var that = this;
 		Object.keys(renderInfo).forEach(function(word) {
 			var wordRenderInfo = renderInfo[word];
 			if (wordRenderInfo.x !== -1 && wordRenderInfo.y !== -1) {
@@ -129,7 +134,10 @@ WordCloudCanvas.prototype = _.extend(WordCloudCanvas.prototype, {
 				ctx.fillStyle = 'red';
 				ctx.strokeStyle = 'green';
 				ctx.fillText(word,wordRenderInfo.x,wordRenderInfo.y);
-//				ctx.strokeRect(wordRenderInfo.x + wordRenderInfo.bb.offsetX, wordRenderInfo.y + wordRenderInfo.bb.offsetY, wordRenderInfo.bb.width, wordRenderInfo.bb.height);
+
+				if (that.debug) {
+					ctx.strokeRect(wordRenderInfo.x + wordRenderInfo.bb.offsetX, wordRenderInfo.y + wordRenderInfo.bb.offsetY, wordRenderInfo.bb.width, wordRenderInfo.bb.height);
+				}
 			}
 		});
 		return this;

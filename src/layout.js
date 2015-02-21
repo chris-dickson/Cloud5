@@ -26,7 +26,12 @@ var Layout = function(attributes) {
 
 Layout.prototype = _.extend(Layout.prototype, {
 	_initialize : function() {
-		this._textBitmapper = new TextBitmap();
+		var textBitmapperAttributes = {};
+		if (this.debug) {
+			textBitmapperAttributes.debug = true;
+		}
+
+		this._textBitmapper = new TextBitmap(textBitmapperAttributes);
 		this._bitmap = createArray(this._canvas.width,this._canvas.height);
 		for (var i = 0; i < this._canvas.width; i++) {
 			for (var j = 0; j < this._canvas.height; j++) {
@@ -110,7 +115,11 @@ Layout.prototype = _.extend(Layout.prototype, {
 		sortedWordArray.forEach(function(word) {
 			var placed = false;
 			var attempts = 100;
-			//debugDrawAll(that._canvas.getContext('2d'),that._canvas.width, that._canvas.height);
+
+			if (this.debug) {
+				debugDrawAll(that._canvas.getContext('2d'),that._canvas.width, that._canvas.height);
+			}
+
 			while (!placed && attempts > 0) {
 				var x = Math.floor(Math.random() * that._canvas.width);
 				var y = Math.floor(Math.random() * that._canvas.height);
