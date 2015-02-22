@@ -1,5 +1,6 @@
 var _ = require('./util');
 var Layout = require('./layout');
+var Stopwords = require('./stopwords');
 
 /**
  * Cloud5 constructor
@@ -145,6 +146,11 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 	words : function(words) {
 		if (words) {
 			var that = this;
+
+			if (Object.keys(this._stopWords).length === 0) {
+				this.stop(Stopwords.English);
+			}
+
 			words.forEach(function (raw) {
 				var word = raw.trim().toLowerCase();
 				if (that._stopWords[word] || word === '') {
