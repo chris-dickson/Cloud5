@@ -51,11 +51,23 @@ WordCloudCanvas.prototype = _.extend(WordCloudCanvas.prototype, {
 	},
 	text : function(text) {
 		var filtered = text.replace(/[\.,-\/#!$%\^&\*;:{}=\-_`~()]/g,'');
-		filtered = filtered.replace(/\[[0-9]*\]/g,'');
-		filtered = filtered.replace(/[\t+\[\]]/g,'');
+		if (this._filters) {
+			this._filters.forEach(function(filter) {
+				filtered = text.replace(filter,'');
+			});
+		}
 		var words = filtered.split(' ');
 		this.words(words);
 		return this;
+	},
+
+	textFilters : function(filters) {
+		if (filters) {
+			this._filters = filters
+			return this;
+		} else {
+			return this._filters;
+		}
 	},
 
 	stop : function(words) {

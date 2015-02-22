@@ -180,6 +180,7 @@ function testmain() {
 		.maxFontSize(250)
 		.background('lightblue')
 		.text(text)
+		.textFilters([/\[[0-9]*\]/g,/[\t+\[\]]/g])
 		.color(function(renderInfo) {
 			var t = (renderInfo.count - renderInfo.minCount)/(renderInfo.maxCount-renderInfo.minCount);
 			var r = Math.floor(t * 255);
