@@ -27,6 +27,6 @@
 		"alert":true,
 		"exports":true,
 	  	"module":true,
-        "WordCloudCanvas":true
+        "Cloud5":true
 	}
 }

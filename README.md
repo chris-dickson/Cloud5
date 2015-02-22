@@ -1,4 +1,4 @@
-# Word Cloud Canvas
+# Cloud5
 
 > A client-side Javascript library for rendering word clouds using HTML5 Canvas.
 
@@ -16,7 +16,7 @@ Requires [node, npm](http://nodejs.org/). Setup:
 npm install
 ```
 
-Word Cloud Canvas uses gulp for building.  To compile the project to `wordcloudcanvas.js` and `wordcloudcanvas.min.js` in the `dist/` directory:
+Cloud5 uses gulp for building.  To compile the project to `cloud5.js` and `cloud5.min.js` in the `dist/` directory:
 ```bash
 gulp
 ```
@@ -28,7 +28,7 @@ None!
 ####Basic usage
 ```javascript
 	var text = // A big long block of text as a string
-	var cloud = new WordCloudCanvas()
+	var cloud = new Cloud5()
 		.canvas(document.getElementById('myCanvas'))
 		.width(800)
 		.height(400)
