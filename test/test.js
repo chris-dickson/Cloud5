@@ -171,23 +171,29 @@ function testmain() {
 	document.body.appendChild(overWordElement);
 
 
-	var words = new WordCloudCanvas()
+	var cloud = new WordCloudCanvas()
 		.canvas(canvas)
 		.width(800)
 		.height(400)
 		.font('Helvetica')
 		.minFontSize(10)
 		.maxFontSize(250)
-		.text(text)
 		.background('lightblue')
+		.text(text)
+		.color(function(renderInfo) {
+			var t = (renderInfo.count - renderInfo.minCount)/(renderInfo.maxCount-renderInfo.minCount);
+			var r = Math.floor(t * 255);
+			return 'rgb('+r+',0,0)';
+		})
 		.onWordOver(function(word) {
 			if (word) {
 				overWordElement.innerHTML = word;
 			}
 		})
-		.generate();
+		.onWordOut(function(word) {
+			overWordElement.innerHTML = '';
+		});
 
 
-	var ibreak = 0;
-	ibreak++;
+	cloud.generate();
 }

@@ -66,6 +66,11 @@ Layout.prototype = _.extend(Layout.prototype, {
 		return this;
 	},
 
+	onWordOut : function(handler) {
+		this._onWordOut = handler;
+		return this;
+	},
+
 	layout : function() {
 		this._initialize();
 		var renderInfo = {};
@@ -90,6 +95,9 @@ Layout.prototype = _.extend(Layout.prototype, {
 
 				var bitmap = that._textBitmapper.create(word,fontSize,that.font || 'Calibri');
 				renderInfo[word] = bitmap;
+				renderInfo[word].count = that._words[word];
+				renderInfo[word].minCount = minCount;
+				renderInfo[word].maxCount = maxCount;
 			});
 		}
 
@@ -154,6 +162,8 @@ Layout.prototype = _.extend(Layout.prototype, {
 			}
 		});
 
+
+		var overWord = null;
 		function onMouseMove(e) {
 			var x = e.offsetX;
 			var y = e.offsetY;
@@ -163,6 +173,12 @@ Layout.prototype = _.extend(Layout.prototype, {
 				if (that._onWordOver) {
 					that._onWordOver(word);
 				}
+				overWord = word;
+			} else if (overWord) {
+				if (that._onWordOut) {
+					that._onWordOut(overWord);
+				}
+				overWord = null;
 			}
 		}
 

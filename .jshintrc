@@ -22,14 +22,11 @@
 		"require":true,
 		"$":true,
 		"jQuery":true,
-		"aperture":true,
 		"_":true,
-		"activityLogger":true,
 		"console":true,
-		"path":true,
 		"alert":true,
-		"GraphJS":true,
 		"exports":true,
-	  	"module":true
+	  	"module":true,
+        "WordCloudCanvas":true
 	}
 }

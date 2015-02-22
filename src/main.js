@@ -107,6 +107,11 @@ WordCloudCanvas.prototype = _.extend(WordCloudCanvas.prototype, {
 		return this;
 	},
 
+	onWordOut : function(handler) {
+		this._onWordOut = handler;
+		return this;
+	},
+
 	font : function(font) {
 		if (font) {
 			this._font = font;
@@ -134,12 +139,12 @@ WordCloudCanvas.prototype = _.extend(WordCloudCanvas.prototype, {
 		}
 	},
 
-	colors : function(colors) {
-		if (colors) {
-			this._colors = colors;
+	color : function(color) {
+		if (color) {
+			this._color = color;
 			return this;
 		} else {
-			return this._colors;
+			return this._color;
 		}
 	},
 
@@ -157,14 +162,12 @@ WordCloudCanvas.prototype = _.extend(WordCloudCanvas.prototype, {
 		if (this._maxFontSize) {
 			layoutAttributes.maxFontSize = this._maxFontSize;
 		}
-		if (this._colors) {
-			layoutAttributes.colors = this._colors;
-		}
 
 		this._layout = new Layout(layoutAttributes)
 			.canvas(this._canvas)
 			.words(this._words)
-			.onWordOver(this._onWordOver);
+			.onWordOver(this._onWordOver)
+			.onWordOut(this._onWordOut);
 
 		var renderInfo = this._layout.layout();
 
@@ -179,7 +182,19 @@ WordCloudCanvas.prototype = _.extend(WordCloudCanvas.prototype, {
 			if (wordRenderInfo.x !== -1 && wordRenderInfo.y !== -1) {
 				ctx.font = wordRenderInfo.fontSize + 'px ' + wordRenderInfo.fontFamily;
 
-				ctx.fillStyle = 'red';
+
+				var clr = 'black';
+				if (that._color) {
+					if (that._color instanceof Array) {
+						var idx = Math.floor(Math.random() * that._color.length);
+						clr = that._color[idx];
+					} else if (that._color instanceof Function) {
+						clr = that._color(renderInfo[word]);
+					} else {
+						clr = that._color;
+					}
+				}
+				ctx.fillStyle = clr;
 				ctx.fillText(word,wordRenderInfo.x,wordRenderInfo.y);
 
 				if (that.debug) {
