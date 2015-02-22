@@ -1,6 +1,11 @@
 var _ = require('./util');
 var Layout = require('./layout');
 
+/**
+ * Cloud5 constructor
+ * @param attributes
+ * @constructor
+ */
 var Cloud5 = function(attributes) {
 
 	this._words = {};
@@ -17,6 +22,12 @@ var Cloud5 = function(attributes) {
 };
 
 Cloud5.prototype = _.extend(Cloud5.prototype, {
+
+	/**
+	 * Gets/sets the canvas
+	 * @param canvas - HTML5 Canvas element
+	 * @returns {*}
+	 */
 	canvas : function(canvas) {
 		if (canvas) {
 			this._canvas = canvas;
@@ -27,6 +38,12 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 			return this._canvas;
 		}
 	},
+
+	/**
+	 * Gets/sets the width of the canvas.   If not set, uses the inherited width from canvas
+	 * @param width - width in pixels
+	 * @returns {*}
+	 */
 	width : function(width) {
 		if (width) {
 			if (this._canvas) {
@@ -38,6 +55,12 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 			return this.width;
 		}
 	},
+
+	/**
+	 * Gets/sets the height of the canvas.  If not set, uses the inherited width from canvas
+	 * @param height - height in pixels
+	 * @returns {*}
+	 */
 	height : function(height) {
 		if (height) {
 			if (this._canvas) {
@@ -49,6 +72,13 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 			return this._height;
 		}
 	},
+
+	/**
+	 * Sets the text for word cloud generation from a large string
+	 * @param text - a string.   By default, we remove all punctuation.   Additional rules can be added by
+	 * calling textFilters(...)
+	 * @returns {Cloud5}
+	 */
 	text : function(text) {
 		var filtered = text.replace(/[\.,-\/#!$%\^&\*;:{}=\-_`~()]/g,'');
 		if (this._filters) {
@@ -61,6 +91,12 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 		return this;
 	},
 
+	/**
+	 * Gets/sets a list of text filters (regular expressions) to be applied.   Rules that match will be deleted
+	 * from the original text string.  They're applied in the order given to this function
+	 * @param filters - an array of regular expressions
+	 * @returns {*}
+	 */
 	textFilters : function(filters) {
 		if (filters) {
 			this._filters = filters
@@ -70,6 +106,11 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 		}
 	},
 
+	/**
+	 * Sets the stop words (words to ignore)
+	 * @param words - an array of strings to ignore
+	 * @returns {*}
+	 */
 	stop : function(words) {
 		if (words) {
 			var that = this;
@@ -82,6 +123,11 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 		}
 	},
 
+	/**
+	 * Gets/sets the background fill style
+	 * @param fillStyle - a valid fillStyle string
+	 * @returns {*}
+	 */
 	background : function(fillStyle) {
 		if (fillStyle) {
 			this._backgroundFill = fillStyle;
@@ -91,6 +137,11 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 		}
 	},
 
+	/**
+	 * Gets/sets the words for the word cloud
+	 * @param words - an array of words.
+	 * @returns {*}
+	 */
 	words : function(words) {
 		if (words) {
 			var that = this;
@@ -114,16 +165,31 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 		}
 	},
 
+	/**
+	 * Set a handler for mousing over a word
+	 * @param handler
+	 * @returns {Cloud5}
+	 */
 	onWordOver : function(handler) {
 		this._onWordOver = handler;
 		return this;
 	},
 
+	/**
+	 * Set a handler for mousing out of a word
+	 * @param handler
+	 * @returns {Cloud5}
+	 */
 	onWordOut : function(handler) {
 		this._onWordOut = handler;
 		return this;
 	},
 
+	/**
+	 * Gets/sets the font family for words
+	 * @param font - font family (ie/ 'Helvetica')
+	 * @returns {*}
+	 */
 	font : function(font) {
 		if (font) {
 			this._font = font;
@@ -133,6 +199,11 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 		}
 	},
 
+	/**
+	 * Gets/sets the minimum font size for words
+	 * @param minFontSize - in pixels
+	 * @returns {*}
+	 */
 	minFontSize : function(minFontSize) {
 		if (minFontSize) {
 			this._minFontSize = minFontSize;
@@ -142,6 +213,11 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 		}
 	},
 
+	/**
+	 * Gets/sets the maximum font size for words
+	 * @param maxFontSize - in pixels
+	 * @returns {*}
+	 */
 	maxFontSize : function(maxFontSize) {
 		if (maxFontSize) {
 			this._maxFontSize = maxFontSize;
@@ -151,6 +227,21 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 		}
 	},
 
+	/**
+	 * Gets/sets colors
+	 * @param color - can be one of the following:
+	 * 		1)  A fillStyle string (ie/ 'red','rgb(255,255,0)', etc)
+	 * 	    2)  An array of fillStyle strings
+	 * 	    3)  A function that returns a fillStyle string given the renderInfo for the word.  ie/
+	 * 	             function(renderInfo) {
+	 * 	                 var word = renderInfo.word;
+	 * 	                 var count = renderInfo.count;
+	 * 	                 var xPos = renderInfo.x;
+	 * 	                 var yPost = renderInfo.y;
+	 * 	                 return // a fillStyle derived from above properties
+	 * 	              }
+	 * @returns {*}
+	 */
 	color : function(color) {
 		if (color) {
 			this._color = color;
@@ -160,6 +251,10 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 		}
 	},
 
+	/**
+	 * Layout and render the word cloud to the canvas provided
+	 * @returns {Cloud5}
+	 */
 	generate : function() {
 		var layoutAttributes = {};
 		if (this.debug) {

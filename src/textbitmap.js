@@ -21,7 +21,7 @@ var TextBitmap = function(attributes) {
 	_.extend(this,attributes);
 
 	this._canvas = document.createElement('canvas');
-	this._canvas.width = 640;
+	this._canvas.width = 640;							// TODO:  this can fail.   Fix it!
 	this._canvas.height = 480;
 	this._context = this._canvas.getContext('2d');
 
@@ -39,23 +39,29 @@ var TextBitmap = function(attributes) {
 
 TextBitmap.prototype = _.extend(TextBitmap.prototype, {
 
+	/**
+	 * Create a bitmap for the given word/font pair.   Return a renderInfo object for this
+	 * @param text - a string that we want to bitmap (ie/ a word)
+	 * @param fontHeight - the height of the font
+	 * @param fontFamily - the font family
+	 * @returns {{bb: {offsetX: number, offsetY: number, width: number, height: number}, bitmap: *, fontSize: *, fontFamily: *}}
+	 */
 	create : function(text,fontHeight,fontFamily) {
 		var ctx = this._context;
 		ctx.fillStyle = 'black';
 		ctx.fillRect(0,0,this._canvas.width,this._canvas.height);
 
-
-
-
 		var textRenderX = 5;
 		var textRenderY = Math.floor(this._canvas.height/2);
 
+		// Fill the font
 		ctx.fillStyle = 'white';
 		ctx.font = fontHeight + 'px ' + fontFamily;
 		ctx.fillText(text,textRenderX,textRenderY);
 
 		var width = ctx.measureText(text).width;
 
+		// Get a relaxed bounding box to grab from the canvas
 		var startX = textRenderX;
 		var startY = textRenderY - fontHeight - 2;
 		var endX = startX + width + textRenderX;
@@ -94,6 +100,7 @@ TextBitmap.prototype = _.extend(TextBitmap.prototype, {
 			}
 		}
 
+		// Trim the bounding box to just pixels that are filled
 		var trimmedBooleanBitmap = createArray(maxX-minX,maxY-minY);
 		for (x = 0; x < maxX-minX; x++) {
 			for (y = 0; y < maxY-minY; y++) {
@@ -133,6 +140,13 @@ TextBitmap.prototype = _.extend(TextBitmap.prototype, {
 
 		return renderInfo;
 	},
+
+	/**
+	 * tests whether a renderInfo object fits into a global boolean bitmap
+	 * @param renderInfo - renderInfo for a word (returned from create)
+	 * @param bitmap - scene bitmap
+	 * @returns {boolean} - true if word fits, false otherwise
+	 */
 	fits : function(renderInfo,bitmap) {
 
 		var startX = renderInfo.x + renderInfo.bb.offsetX;
