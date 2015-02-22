@@ -38,9 +38,9 @@ gulp.task('build', function() {
     .external(config.externalLibs)
     .bundle({
       debug : 'true',
-      standalone: 'WordCloudCanvas'
+      standalone: 'Cloud5'
     })
-    .pipe(source('wordcloudcanvas.js'))
+    .pipe(source('Cloud5.js'))
     .pipe(gulp.dest(config.dist))
     .pipe(rename({suffix: '.min'}))
     .pipe(buffer())

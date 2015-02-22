@@ -1,7 +1,7 @@
 var _ = require('./util');
 var Layout = require('./layout');
 
-var WordCloudCanvas = function(attributes) {
+var Cloud5 = function(attributes) {
 
 	this._words = {};
 	this._stopWords = {};
@@ -16,7 +16,7 @@ var WordCloudCanvas = function(attributes) {
 	_.extend(this,attributes);
 };
 
-WordCloudCanvas.prototype = _.extend(WordCloudCanvas.prototype, {
+Cloud5.prototype = _.extend(Cloud5.prototype, {
 	canvas : function(canvas) {
 		if (canvas) {
 			this._canvas = canvas;
@@ -220,4 +220,4 @@ WordCloudCanvas.prototype = _.extend(WordCloudCanvas.prototype, {
 });
 
 
-module.exports = WordCloudCanvas;
+module.exports = Cloud5;
