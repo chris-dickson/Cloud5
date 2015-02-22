@@ -21,8 +21,6 @@ Word Cloud Canvas uses gulp for building.  To compile the project to `wordcloudc
 gulp
 ```
 
-### Usage
-
 ####Dependencies
 
 None!
