@@ -3,10 +3,37 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title>Word Cloud Test</title>
-    <script src="../dist/cloud5.js"></script>
+    <script src="../../dist/Cloud5.js"></script>
     <script src="test.js"></script>
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
 </head>
 <body onload="testmain()">
-    <canvas id="myCanvas"></canvas>
+    <div id="controls">
+        <div>Text:</div>
+        <textarea id="myText" style="width:400px; min-height:200px"></textarea>
+        <div>
+            <label>Minimum Font Size (px):</label><input type="number" id="minFontSize" value="10" min="1">
+        </div>
+        <div>
+            <label>Maximum Font Size (px):</label><input type="number" id="maxFontSize" value="100" min="1">
+        </div>
+        <div>
+            <label>Font Family:</label><input id="fontFamily" value="Calibri">
+        </div>
+        <div>
+            <label>Colors:</label>
+            <ul id="colorList">
+                <li><input type="color" value="#000000" class="color"></li>
+            </ul>
+            <button id="addColor">Add</button>
+        </div>
+        <div>
+        <label>Background:</label><input id="background" type="color" value="#ffffff">
+        </div>
+        <div>
+            <button id="generate">Generate</button>
+        </div>
+    </div>
+    <canvas id="myCanvas" width="800" height="600"></canvas>
 </body>
 </html>
