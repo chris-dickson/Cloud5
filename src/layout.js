@@ -1,24 +1,6 @@
 var _ = require('./util');
 var TextBitmap = require('./textbitmap');
 
-/**
- * Helper for creating an array
- * @param length
- * @returns {Array}
- */
-function createArray(length) {
-	var arr = new Array(length || 0),
-		i = length;
-
-	if (arguments.length > 1) {
-		var args = Array.prototype.slice.call(arguments, 1);
-		while(i--) {
-			arr[length-1 - i] = createArray.apply(this, args);
-		}
-	}
-
-	return arr;
-}
 
 /**
  * Layout constructor
@@ -41,13 +23,16 @@ Layout.prototype = _.extend(Layout.prototype, {
 	 * @private
 	 */
 	_initialize : function() {
-		var textBitmapperAttributes = {};
+		var textBitmapperAttributes = {
+			width : this._canvas.width,
+			height : this._canvas.height
+		};
 		if (this.debug) {
 			textBitmapperAttributes.debug = true;
 		}
 
 		this._textBitmapper = new TextBitmap(textBitmapperAttributes);
-		this._bitmap = createArray(this._canvas.width,this._canvas.height);
+		this._bitmap = _.createArray(this._canvas.width,this._canvas.height);
 		for (var i = 0; i < this._canvas.width; i++) {
 			for (var j = 0; j < this._canvas.height; j++) {
 				this._bitmap[i][j] = false;

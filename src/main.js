@@ -100,7 +100,7 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 	 */
 	textFilters : function(filters) {
 		if (filters) {
-			this._filters = filters
+			this._filters = filters;
 			return this;
 		} else {
 			return this._filters;

@@ -177,7 +177,7 @@ function testmain() {
 		.height(400)
 		.font('Helvetica')
 		.minFontSize(10)
-		.maxFontSize(100)
+		.maxFontSize(250)
 		.background('#0055bb')
 		.text(text)
 		.textFilters([/\[[0-9]*\]/g,/[\t+\[\]]/g])		// remove citations and special characters
