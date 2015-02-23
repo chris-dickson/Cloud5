@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Word Cloud Test</title>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+    <script src="../../dist/Cloud5.js"></script>
+    <script src="test.js"></script>
+    <script src="//code.jquery.com/jquery-latest.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+</head>
+<body onload="testmain()">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 canvas-container">
+                <canvas id="myCanvas" width="500" height="300"></canvas>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="control">
+                    <label>Text:</label>
+                    <textarea id="myText"></textarea>
+                </div>
+                <div class="control">
+                    <button id="generate">Generate</button>
+                </div>
+            </div>
+        </div>
+
+            <div id="controls" class="row">
+                <div class="col-md-6">
+                    <div class="control">
+                        <label>Min Font Size (px):</label><input class="textInput" type="number" id="minFontSize" value="10" min="1">
+                    </div>
+                    <div class="control">
+                        <label>Max Font Size (px):</label><input class="textInput" type="number" id="maxFontSize" value="100" min="1">
+                    </div>
+                    <div class="control">
+                        <label>Font Family:</label><input class="textInput" id="fontFamily" value="Calibri">
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div id="colorsContainer" class="control">
+                        <label>Colors:</label>
+                        <button id="addColor">+</button>
+                        <input type="color" value="#000000" class="color">
+                    </div>
+
+
+                    <div class="control">
+                        <label>Background:</label><input id="background" type="color" value="#ffffff">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

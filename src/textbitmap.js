@@ -1,35 +1,20 @@
 var _ = require('./util');
 
-function createArray(length) {
-	var arr = new Array(length || 0),
-		i = length;
-
-	if (arguments.length > 1) {
-		var args = Array.prototype.slice.call(arguments, 1);
-		while(i--) {
-			arr[length - 1 - i] = createArray.apply(this, args);
-		}
-	}
-
-
-	return arr;
-}
 
 var TextBitmap = function(attributes) {
-	this._canvas = null;
 	this._context = null;
 	_.extend(this,attributes);
 
 	this._canvas = document.createElement('canvas');
-	this._canvas.width = 640;
-	this._canvas.height = 480;
+	this._canvas.width = this.width || 640;
+	this._canvas.height = this.height || 480;
 	this._context = this._canvas.getContext('2d');
 
 	if (this.debug) {
 		document.body.appendChild(this._canvas);
 	}
 
-	this._bitmap = createArray(this._canvas.width,this._canvas.height);
+	this._bitmap = _.createArray(this._canvas.width,this._canvas.height);
 	for (var i = 0; i < this._canvas.width; i++) {
 		for (var j = 0; j < this._canvas.height; j++) {
 			this._bitmap[i][j] = false;
@@ -39,23 +24,29 @@ var TextBitmap = function(attributes) {
 
 TextBitmap.prototype = _.extend(TextBitmap.prototype, {
 
+	/**
+	 * Create a bitmap for the given word/font pair.   Return a renderInfo object for this
+	 * @param text - a string that we want to bitmap (ie/ a word)
+	 * @param fontHeight - the height of the font
+	 * @param fontFamily - the font family
+	 * @returns {{bb: {offsetX: number, offsetY: number, width: number, height: number}, bitmap: *, fontSize: *, fontFamily: *}}
+	 */
 	create : function(text,fontHeight,fontFamily) {
 		var ctx = this._context;
 		ctx.fillStyle = 'black';
 		ctx.fillRect(0,0,this._canvas.width,this._canvas.height);
 
-
-
-
 		var textRenderX = 5;
 		var textRenderY = Math.floor(this._canvas.height/2);
 
+		// Fill the font
 		ctx.fillStyle = 'white';
 		ctx.font = fontHeight + 'px ' + fontFamily;
 		ctx.fillText(text,textRenderX,textRenderY);
 
 		var width = ctx.measureText(text).width;
 
+		// Get a relaxed bounding box to grab from the canvas
 		var startX = textRenderX;
 		var startY = textRenderY - fontHeight - 2;
 		var endX = startX + width + textRenderX;
@@ -65,7 +56,7 @@ TextBitmap.prototype = _.extend(TextBitmap.prototype, {
 
 		var imageData = ctx.getImageData(startX,startY,endX - startX,endY - startY);
 
-		var booleanBitmap = createArray(imageData.width,imageData.height);
+		var booleanBitmap = _.createArray(imageData.width,imageData.height);
 		var x = 0;
 		var y = 0;
 		for (var i = 0; i < imageData.data.length; i+=4) {
@@ -94,7 +85,8 @@ TextBitmap.prototype = _.extend(TextBitmap.prototype, {
 			}
 		}
 
-		var trimmedBooleanBitmap = createArray(maxX-minX,maxY-minY);
+		// Trim the bounding box to just pixels that are filled
+		var trimmedBooleanBitmap = _.createArray(maxX-minX,maxY-minY);
 		for (x = 0; x < maxX-minX; x++) {
 			for (y = 0; y < maxY-minY; y++) {
 				trimmedBooleanBitmap[x][y] = booleanBitmap[minX+x][minY+y];
@@ -133,6 +125,13 @@ TextBitmap.prototype = _.extend(TextBitmap.prototype, {
 
 		return renderInfo;
 	},
+
+	/**
+	 * tests whether a renderInfo object fits into a global boolean bitmap
+	 * @param renderInfo - renderInfo for a word (returned from create)
+	 * @param bitmap - scene bitmap
+	 * @returns {boolean} - true if word fits, false otherwise
+	 */
 	fits : function(renderInfo,bitmap) {
 
 		var startX = renderInfo.x + renderInfo.bb.offsetX;

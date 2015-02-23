@@ -1,0 +1,23 @@
+.textInput {
+    position: absolute;
+    right: 0px;
+    padding: 2px;
+}
+
+.control {
+    padding: 3px;
+}
+
+.container {
+    padding: 5px;
+}
+
+#myCanvas {
+    border: 1px solid lightgray;
+}
+
+#myText {
+    width:100%;
+    min-width: 300px;
+    min-height:200px
+}

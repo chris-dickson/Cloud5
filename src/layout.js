@@ -1,20 +1,12 @@
 var _ = require('./util');
 var TextBitmap = require('./textbitmap');
 
-function createArray(length) {
-	var arr = new Array(length || 0),
-		i = length;
 
-	if (arguments.length > 1) {
-		var args = Array.prototype.slice.call(arguments, 1);
-		while(i--) {
-			arr[length-1 - i] = createArray.apply(this, args);
-		}
-	}
-
-	return arr;
-}
-
+/**
+ * Layout constructor
+ * @param attributes
+ * @constructor
+ */
 var Layout = function(attributes) {
 	this._canvas = null;
 	this._words = null;
@@ -25,14 +17,22 @@ var Layout = function(attributes) {
 };
 
 Layout.prototype = _.extend(Layout.prototype, {
+
+	/**
+	 * Initialize the text bitmapper and create our boolean bitmap of the scene
+	 * @private
+	 */
 	_initialize : function() {
-		var textBitmapperAttributes = {};
+		var textBitmapperAttributes = {
+			width : this._canvas.width,
+			height : this._canvas.height
+		};
 		if (this.debug) {
 			textBitmapperAttributes.debug = true;
 		}
 
 		this._textBitmapper = new TextBitmap(textBitmapperAttributes);
-		this._bitmap = createArray(this._canvas.width,this._canvas.height);
+		this._bitmap = _.createArray(this._canvas.width,this._canvas.height);
 		for (var i = 0; i < this._canvas.width; i++) {
 			for (var j = 0; j < this._canvas.height; j++) {
 				this._bitmap[i][j] = false;
@@ -40,6 +40,11 @@ Layout.prototype = _.extend(Layout.prototype, {
 		}
 	},
 
+	/**
+	 * Gets/sets the canvas for the layout
+	 * @param canvas
+	 * @returns {*}
+	 */
 	canvas : function(canvas) {
 		if (canvas) {
 			this._canvas = canvas;
@@ -48,6 +53,12 @@ Layout.prototype = _.extend(Layout.prototype, {
 			return this._canvas;
 		}
 	},
+
+	/**
+	 * Gets/sets the words to layout
+	 * @param words
+	 * @returns {*}
+	 */
 	words : function(words) {
 		if (words) {
 			this._words = words;
@@ -57,23 +68,36 @@ Layout.prototype = _.extend(Layout.prototype, {
 		}
 	},
 
-	bitmap : function() {
-		return this._textBitmapper.toCanvas(this._bitmap);
-	},
-
+	/**
+	 * Set wordOver handler
+	 * @param handler
+	 * @returns {Layout}
+	 */
 	onWordOver : function(handler) {
 		this._onWordOver = handler;
 		return this;
 	},
 
+	/**
+	 * Set wordOut handler
+	 * @param handler
+	 * @returns {Layout}
+	 */
 	onWordOut : function(handler) {
 		this._onWordOut = handler;
 		return this;
 	},
 
+	/**
+	 * Perform the layout
+	 * @returns {{}}
+	 */
 	layout : function() {
 		this._initialize();
 		var renderInfo = {};
+
+		// Get counts for each word, then figure out the font size for each word.   Create a boolean bitmap and
+		// bounding box for each word
 		if (this._words) {
 			var that = this;
 
@@ -85,10 +109,19 @@ Layout.prototype = _.extend(Layout.prototype, {
 				maxCount = Math.max(that._words[word],maxCount);
 			});
 
+			// Sort the words by frequency
+			var sortedWordArray = Object.keys(this._words).sort(function(w1,w2) {
+				return that._words[w2]-that._words[w1];
+			});
+
+			if (this.maxWords && sortedWordArray.length > this.maxWords) {
+				sortedWordArray = sortedWordArray.splice(0,this.maxWords);
+			}
+
 
 			var minFontSize = this.minFontSize || 10;
 			var maxFontSize = this.maxFontSize || 200;
-			Object.keys(this._words).forEach(function(word) {
+			sortedWordArray.forEach(function(word) {
 
 				var t = (that._words[word] - minCount)/(maxCount-minCount);
 				var fontSize =_.step(minFontSize,maxFontSize,t);
@@ -101,10 +134,12 @@ Layout.prototype = _.extend(Layout.prototype, {
 			});
 		}
 
-		var sortedWordArray = Object.keys(this._words).sort(function(w1,w2) {
-			return that._words[w2]-that._words[w1];
-		});
-
+		/**
+		 * Debug routine to draw our words as we lay them out
+		 * @param ctx - canvas context
+		 * @param w - width
+		 * @param h - height
+		 */
 		function debugDrawAll(ctx,w,h) {
 			ctx.fillStyle = 'white';
 			ctx.fillRect(0,0,w,h);
@@ -120,6 +155,7 @@ Layout.prototype = _.extend(Layout.prototype, {
 			});
 		}
 
+		// Layout each word
 		sortedWordArray.forEach(function(word) {
 			var placed = false;
 			var attempts = 100;
@@ -128,6 +164,7 @@ Layout.prototype = _.extend(Layout.prototype, {
 				debugDrawAll(that._canvas.getContext('2d'),that._canvas.width, that._canvas.height);
 			}
 
+			// Try placing the word and see if it fits/hits anything else already placed
 			while (!placed && attempts > 0) {
 				var x = Math.floor(Math.random() * that._canvas.width);
 				var y = Math.floor(Math.random() * that._canvas.height);
@@ -135,6 +172,7 @@ Layout.prototype = _.extend(Layout.prototype, {
 				renderInfo[word].x = x;
 				renderInfo[word].y = y;
 
+				// If it fits, update the bitmap for the entire scene to say those pixels are occupied
 				if (that._textBitmapper.fits(renderInfo[word],that._bitmap)) {
 					placed = true;
 
@@ -163,6 +201,7 @@ Layout.prototype = _.extend(Layout.prototype, {
 		});
 
 
+		// Bind handlers
 		var overWord = null;
 		function onMouseMove(e) {
 			var x = e.offsetX;

@@ -178,14 +178,10 @@ function testmain() {
 		.font('Helvetica')
 		.minFontSize(10)
 		.maxFontSize(250)
-		.background('lightblue')
+		.background('#0055bb')
 		.text(text)
-		.textFilters([/\[[0-9]*\]/g,/[\t+\[\]]/g])
-		.color(function(renderInfo) {
-			var t = (renderInfo.count - renderInfo.minCount)/(renderInfo.maxCount-renderInfo.minCount);
-			var r = Math.floor(t * 255);
-			return 'rgb('+r+',0,0)';
-		})
+		.textFilters([/\[[0-9]*\]/g,/[\t+\[\]]/g])		// remove citations and special characters
+		.color(['#44bbcc','#88dddd','#bbeeff'])
 		.onWordOver(function(word) {
 			if (word) {
 				overWordElement.innerHTML = word;
