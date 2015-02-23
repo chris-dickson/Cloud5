@@ -43,6 +43,11 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 	 */
 	canvas : function(canvas) {
 		if (canvas) {
+
+            if (canvas === this._canvas) {
+                return this;
+            }
+
             var dpr = window.devicePixelRatio;
             var cWidth = canvas.width;
             var cHeight = canvas.height;
