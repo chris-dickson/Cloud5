@@ -1,3 +1,7 @@
+p {
+    padding: 2px;
+}
+
 .textInput {
     position: absolute;
     right: 0px;
