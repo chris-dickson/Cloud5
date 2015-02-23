@@ -281,7 +281,12 @@ Layout.prototype = _.extend(Layout.prototype, {
 					that._onWordOver(word);
 				}
 				overWord = word;
-			}
+			} else {
+                if (that._onWordOut) {
+                    that._onWordOut(overWord);
+                }
+                overWord = null;
+            }
 		}
 
         function onMouseClick(e) {
