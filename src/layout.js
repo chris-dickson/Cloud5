@@ -173,8 +173,9 @@ Layout.prototype = _.extend(Layout.prototype, {
 			}
 
 
-			var minFontSize = this.minFontSize || 10;
-			var maxFontSize = this.maxFontSize || 200;
+            var dpr = window.devicePixelRatio;
+			var minFontSize = (this.minFontSize || 10) * dpr;
+			var maxFontSize = (this.maxFontSize || 200)* dpr;
 			sortedWordArray.forEach(function(word) {
 
 				var t = (that._words[word] - minCount)/(maxCount-minCount);
