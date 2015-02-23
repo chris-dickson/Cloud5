@@ -269,15 +269,17 @@ Layout.prototype = _.extend(Layout.prototype, {
 
 			var word = that._hit(x,y);
 			if (word) {
+                if (overWord) {
+                    if (that._onWordOut) {
+                        that._onWordOut(overWord);
+                    }
+                    overWord = null;
+                }
+
 				if (that._onWordOver) {
 					that._onWordOver(word);
 				}
 				overWord = word;
-			} else if (overWord) {
-				if (that._onWordOut) {
-					that._onWordOut(overWord);
-				}
-				overWord = null;
 			}
 		}
 

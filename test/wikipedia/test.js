@@ -190,12 +190,10 @@ function testmain() {
 		.textFilters([/\[[0-9]*\]/g,/[\t+\[\]]/g])		// remove citations and special characters
 		.color(['#44bbcc','#88dddd','#bbeeff'])
 		.onWordOver(function(word) {
-			if (word) {
-				overWordElement.innerHTML = word;
-			}
+			cloud.highlight(word,'red')
 		})
 		.onWordOut(function(word) {
-			overWordElement.innerHTML = '';
+			cloud.unhighlight(word);
 		})
         .onWordClick(function(word) {
             alert(word);
