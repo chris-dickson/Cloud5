@@ -11,6 +11,10 @@ function livedemo() {
 	});
 	$(window).resize();
 
+	$('#sample').click(function() {
+		$('#myText').val(gatsby);
+	});
+
 
 	$('#generate').click(function() {
 		var textArea = $('#myText');
