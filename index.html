@@ -28,6 +28,7 @@
     <script src="test/live/test.js"></script>
     <script src="dist/Cloud5.js"></script>
     <script src="test/fillWindow/gatsby.js"></script>
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
 
 </head>
 
@@ -44,13 +45,10 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#overview">Overview</a>
+                    <a href="#gettingstarted">Getting Started</a>
                 </li>
                 <li>
                     <a href="#demo">Demo</a>
-                </li>
-                <li>
-                    <a href="#gettingstarted">Getting Started</a>
                 </li>
                 <li>
                     <a href="#contact">Contact</a>
@@ -67,8 +65,53 @@
                         <h1>Cloud5</h1>
                         <h4>Cloud5 is an entirely client-side Javascript library for rendering beautiful word clouds using HTML5 Canvas.</h4>
 
-                        <h3 id="#overview">Overview</h3>
+
+
+                        <h3 id="#gettingstarted">Getting Started</h3>
                         <p>Unlike other word cloud libraries that rely on a server, Cloud5 runs entirely within your web browser.   No backend necessary.</p>
+                        <p>You can <a href="dist/Cloud5.min.js">download the minified Javascript library here</a>.  Alternatively, you can <a href="dist/Cloud5.js">use the unminified version.</a></p>
+                        <p>To start generating word clouds, simply include the source file in your webpage.  We'll now show a basic example for generating a word cloud</p>
+                        <pre class="prettyprint">
+var text = // a big text string
+
+var cloud = new Cloud5()
+    .canvas(document.getElementById('myCanvas'))
+    .text(text)
+    .generate();
+                        </pre>
+                        <p>Using the text from <a href="http://www.americanrhetoric.com/speeches/jfkinaugural.htm">John F. Kennedy's Inaugural Address in 1961</a>:</p>
+                        <img src="img/sample1.png" width="100%" alt="JFK's Inaugural Address">
+
+
+                        <p>By default, we strip punctuation from the text string and convert all strings to lowercase.  A more advanced example is shown below:</p>
+
+                        <pre class="prettyprint">
+var text = // a big text string
+var cloud = new Cloud5()
+    .canvas(canvas)
+    .width(800)
+    .height(400)
+    .font('Helvetica')
+    .minFontSize(10)
+    .maxFontSize(250)
+    .background('#0055bb')
+    .text(text)
+    .textFilters([/\[[0-9]*\]/g,/[\t+\[\]]/g])
+    .color(['#44bbcc','#88dddd','#bbeeff'])
+    .onWordOver(function(word) {
+        // handle mousing over a word
+    })
+    .onWordOut(function(word) {
+        // handle mousing out of a word
+    });
+                        </pre>
+
+                        <p>The <code>textFilters</code> function takes an array of regular expressions.   They are executed in the other provided and will remove all strings that match.  In the above
+                        example, we use it to remove citations from Wikipedia text, as well as special characters.</p>
+                        <p>The <code>color</code> function can accept a single color string, an array of them, or a function.   The function takes an object as an argument that shows the position, word (string) and frequency of the word being rendered.   The function can return a color
+                        string and that word will be rendered the given color.</p>
+                        <p>An example using the above setup and the article on the Preamble to the Constitution:</p>
+                        <img src="img/sample2.png" width="100%">
 
                         <h3 id="#demo">Demo</h3>
                             <p>Enter some text in the text area below and click generate to see a word cloud.</p>
@@ -120,12 +163,9 @@
                                 </div>
                             </div>
 
-                        <h3 id="#gettingstarted">Getting Started</h3>
-                        <p>Coming soon!</p>
-
                         <!-- <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a> -->
                         <h3 id="#contact">Contact</h3>
-                        <p>cloudfive.js@gmail.com</p>
+                        <p><a href="mailto:cloudfive.js@gmail.com">cloudfive.js@gmail.com</a></p>
                     </div>
                 </div>
             </div>
