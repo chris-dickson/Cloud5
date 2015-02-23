@@ -18,6 +18,10 @@ var Cloud5 = function(attributes) {
 	this._stopWords = {};
 
 	this._canvas = null;
+
+    this._highlightCanvas = null;
+    this._highlightedWords = null;
+
 	this._width = null;
 	this._height = null;
 	this._backgroundFill = null;
@@ -25,6 +29,7 @@ var Cloud5 = function(attributes) {
     this._onWordOut = null;
     this._onWordClick = null;
 	this._layout = null;
+    this._renderInfo = null;
 
 	_.extend(this,attributes);
 };
@@ -48,6 +53,9 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
                 cHeight *= dpr;
             }
 
+            this._highlightedWords = {};
+            this._renderInfo = {};
+
 
 			this._canvas = canvas;
             this._canvas.width = cWidth;
@@ -56,6 +64,19 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
             this._canvas.style.height = cssHeight + 'px;'
 			this._width = cWidth;
 			this._height = cHeight;
+
+
+            this._highlightCanvas = document.createElement('canvas');
+            this._highlightCanvas.width = this._canvas.width;
+            this._highlightCanvas.height = this._canvas.height;
+            this._highlightCanvas.style.width = this._canvas.style.width;
+            this._highlightCanvas.style.height = this._canvas.style.height;
+            this._highlightCanvas.style.position = 'absolute';
+            this._highlightCanvas.style.pointerEvents = 'none';
+            this._highlightCanvas.style.top = this._canvas.getBoundingClientRect().top;
+            this._highlightCanvas.style.left = this._canvas.getBoundingClientRect().left;
+            this._canvas.parentNode.insertBefore(this._highlightCanvas,this._canvas);
+
 			return this;
 		} else {
 			return this._canvas;
@@ -99,11 +120,21 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
             this._canvas.style.width = w + 'px';
             this._width =  dpr * w;
 
+            if (this._highlightCanvas) {
+                this._highlightCanvas.width = this._canvas.width;
+                this._highlightCanvas.style.width = this._canvas.style.width;
+            }
+
         }
         if (h) {
             this._canvas.height = dpr * h;
             this._canvas.style.height = h + 'px';
             this._height = dpr * h;
+
+            if (this._highlightCanvas) {
+                this._highlightCanvas.height = this._canvas.height;
+                this._highlightCanvas.style.height = this._canvas.style.height;
+            }
         }
         return this;
     },
@@ -210,6 +241,43 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 			return this._words;
 		}
 	},
+
+    highlight : function(words,color) {
+        if (words instanceof Array === false) {
+            words = [words];
+        }
+        var that = this;
+        words.forEach(function(word) {
+            that._highlightedWords[word] = color;
+        });
+        this._updateHightlight();
+    },
+
+    unhighlight : function(words) {
+        if (words instanceof Array === false) {
+            words = [words];
+        }
+        var that = this;
+        words.forEach(function(word) {
+            delete that._highlightedWords[word]
+        });
+        this._updateHightlight();
+    },
+
+    _updateHightlight : function() {
+        var that = this;
+        var highlightCtx = this._highlightCanvas.getContext('2d');
+        highlightCtx.clearRect(0,0,this._highlightCanvas.width,this._highlightCanvas.height);
+        Object.keys(this._highlightedWords).forEach(function(word) {
+            var renderInfo = that._renderInfo[word];
+            var clr = that._highlightedWords[word];
+            if (renderInfo) {
+                highlightCtx.fillStyle = clr;
+                highlightCtx.font = renderInfo.fontSize + 'px ' + renderInfo.fontFamily;
+                highlightCtx.fillText(word,renderInfo.x,renderInfo.y);
+            }
+        });
+    },
 
 	/**
 	 * Set a handler for mousing over a word
@@ -352,7 +420,7 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
             .onWordClick(this._onWordClick);
 		this._logger.pop();
 
-		var renderInfo = this._layout.layout();
+		this._renderInfo = this._layout.layout();
 
 		this.clear();
 
@@ -361,8 +429,8 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 
 		this._logger.push('Render');
 		var that = this;
-		Object.keys(renderInfo).forEach(function(word) {
-			var wordRenderInfo = renderInfo[word];
+		Object.keys(this._renderInfo).forEach(function(word) {
+			var wordRenderInfo = that._renderInfo[word];
 			if (wordRenderInfo.x !== -1 && wordRenderInfo.y !== -1) {
 				ctx.font = wordRenderInfo.fontSize + 'px ' + wordRenderInfo.fontFamily;
 
@@ -373,7 +441,7 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 						var idx = Math.floor(Math.random() * that._color.length);
 						clr = that._color[idx];
 					} else if (that._color instanceof Function) {
-						clr = that._color(renderInfo[word]);
+						clr = that._color(wordRenderInfo);
 					} else {
 						clr = that._color;
 					}
@@ -409,5 +477,5 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
     }
 });
 
-
 module.exports = Cloud5;
+module.exports.Stopwords = Stopwords;
