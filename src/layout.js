@@ -11,6 +11,7 @@ var Layout = function(attributes) {
 	this._canvas = null;
 	this._words = null;
 	this._bitmap = null;
+    this._renderInfo = null;
 	this._textBitmapper = null;
 
 	_.extend(this,attributes);
@@ -32,6 +33,7 @@ Layout.prototype = _.extend(Layout.prototype, {
 		}
 
 		this._textBitmapper = new TextBitmap(textBitmapperAttributes);
+        this._renderInfo = {};
 		this._bitmap = _.createArray(this._canvas.width,this._canvas.height);
 		for (var i = 0; i < this._canvas.width; i++) {
 			for (var j = 0; j < this._canvas.height; j++) {
@@ -39,6 +41,47 @@ Layout.prototype = _.extend(Layout.prototype, {
 			}
 		}
 	},
+
+    /**
+     * Hit test a position x,y for a word.  TODO:  make this way faster.   BSP Tree?
+     * @param x - x offset into canvas
+     * @param y - y offset into canvas
+     * @returns {*}
+     * @private
+     */
+    _hit : function(x,y) {
+        var word = null;
+        var that = this;
+
+        // Get a list of bounding boxes that x,y are in
+        var containedWords = Object.keys(this._renderInfo).filter(function(word) {
+            var renderInfo = that._renderInfo[word];
+            var minX = renderInfo.x + renderInfo.bb.offsetX;
+            var minY = renderInfo.y + renderInfo.bb.offsetY;
+            var maxX = minX + renderInfo.bb.width;
+            var maxY = minY + renderInfo.bb.height;
+            if (minX <= x && x <= maxX && minY <= y && y <= maxY) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+
+        // Sort by size
+        containedWords.sort(function(w1,w2) {
+            var b1 = that._renderInfo[w1].bb;
+            var b2 = that._renderInfo[w2].bb;
+            var b1A = b1.width * b1.height;
+            var b2A = b2.width * b2.height;
+            return b1A - b2A;
+        });
+
+        // Return the word with the smallest bounding box
+        if (containedWords.length > 0) {
+            word = containedWords[0];
+        }
+        return word;
+    },
 
 	/**
 	 * Gets/sets the canvas for the layout
@@ -88,13 +131,24 @@ Layout.prototype = _.extend(Layout.prototype, {
 		return this;
 	},
 
+    /**
+     * Set wordClick handler
+     * @param handler
+     * @returns {Layout}
+     */
+    onWordClick : function(handler) {
+        this._onWordClick = handler;
+        return this;
+    },
+
+
 	/**
 	 * Perform the layout
 	 * @returns {{}}
 	 */
 	layout : function() {
 		this._initialize();
-		var renderInfo = {};
+		this._renderInfo = {};
 
 		// Get counts for each word, then figure out the font size for each word.   Create a boolean bitmap and
 		// bounding box for each word
@@ -127,10 +181,10 @@ Layout.prototype = _.extend(Layout.prototype, {
 				var fontSize =_.step(minFontSize,maxFontSize,t);
 
 				var bitmap = that._textBitmapper.create(word,fontSize,that.font || 'Calibri');
-				renderInfo[word] = bitmap;
-				renderInfo[word].count = that._words[word];
-				renderInfo[word].minCount = minCount;
-				renderInfo[word].maxCount = maxCount;
+				that._renderInfo[word] = bitmap;
+				that._renderInfo[word].count = that._words[word];
+				that._renderInfo[word].minCount = minCount;
+				that._renderInfo[word].maxCount = maxCount;
 			});
 		}
 
@@ -143,8 +197,9 @@ Layout.prototype = _.extend(Layout.prototype, {
 		function debugDrawAll(ctx,w,h) {
 			ctx.fillStyle = 'white';
 			ctx.fillRect(0,0,w,h);
-			Object.keys(renderInfo).forEach(function(word) {
-				var wordRenderInfo = renderInfo[word];
+            var that = this;
+			Object.keys(this._renderInfo).forEach(function(word) {
+				var wordRenderInfo = that._renderInfo[word];
 				if (wordRenderInfo.x !== undefined && wordRenderInfo.x !== -1 && wordRenderInfo.y !== undefined && wordRenderInfo.y !== -1) {
 					ctx.font = wordRenderInfo.fontSize + 'px ' + wordRenderInfo.fontFamily;
 					ctx.fillStyle = 'red';
@@ -164,27 +219,29 @@ Layout.prototype = _.extend(Layout.prototype, {
 				debugDrawAll(that._canvas.getContext('2d'),that._canvas.width, that._canvas.height);
 			}
 
+            var renderInfo = that._renderInfo[word];
+
 			// Try placing the word and see if it fits/hits anything else already placed
 			while (!placed && attempts > 0) {
 				var x = Math.floor(Math.random() * that._canvas.width);
 				var y = Math.floor(Math.random() * that._canvas.height);
 
-				renderInfo[word].x = x;
-				renderInfo[word].y = y;
+				renderInfo.x = x;
+				renderInfo.y = y;
 
 				// If it fits, update the bitmap for the entire scene to say those pixels are occupied
-				if (that._textBitmapper.fits(renderInfo[word],that._bitmap)) {
+				if (that._textBitmapper.fits(renderInfo,that._bitmap)) {
 					placed = true;
 
-					var bitmapWidth = renderInfo[word].bitmap.length;
-					var bitmapHeight = renderInfo[word].bitmap[0].length;
+					var bitmapWidth = renderInfo.bitmap.length;
+					var bitmapHeight = renderInfo.bitmap[0].length;
 
 					for (var i = 0; i < bitmapWidth; i++) {
 						for (var j = 0; j < bitmapHeight; j++) {
-							var u = renderInfo[word].x + renderInfo[word].bb.offsetX + i;
-							var v = renderInfo[word].y + renderInfo[word].bb.offsetY + j;
+							var u = renderInfo.x + renderInfo.bb.offsetX + i;
+							var v = renderInfo.y + renderInfo.bb.offsetY + j;
 
-							if (renderInfo[word].bitmap[i][j]) {
+							if (renderInfo.bitmap[i][j]) {
 								that._bitmap[u][v] = word;
 							}
 						}
@@ -195,8 +252,8 @@ Layout.prototype = _.extend(Layout.prototype, {
 				}
 			}
 			if (!placed) {
-				renderInfo[word].x = -1;
-				renderInfo[word].y = -1;
+				renderInfo.x = -1;
+				renderInfo.y = -1;
 			}
 		});
 
@@ -207,7 +264,7 @@ Layout.prototype = _.extend(Layout.prototype, {
 			var x = e.offsetX;
 			var y = e.offsetY;
 
-			var word = that._bitmap[x][y];
+			var word = that._hit(x,y);
 			if (word) {
 				if (that._onWordOver) {
 					that._onWordOver(word);
@@ -221,10 +278,22 @@ Layout.prototype = _.extend(Layout.prototype, {
 			}
 		}
 
+        function onMouseClick(e) {
+            var x = e.offsetX;
+            var y = e.offsetY;
+            var word = that._hit(x,y);
+            if (word) {
+                if (that._onWordClick) {
+                    that._onWordClick(word);
+                }
+            }
+        }
+
 		this._canvas.onmousemove = onMouseMove;
+        this._canvas.onclick = onMouseClick;
 
 
-		return renderInfo;
+		return that._renderInfo;
 	}
 });
 
