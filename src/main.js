@@ -394,6 +394,11 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 		}
 	},
 
+    layout : function(handler) {
+        this._layout = handler;
+        return this;
+    },
+
 	/**
 	 * Layout and render the word cloud to the canvas provided
 	 * @returns {Cloud5}
@@ -420,6 +425,7 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 		this._layout = new Layout(layoutAttributes)
 			.canvas(this._canvas)
 			.words(this._words)
+            .layouter(this._layout)
 			.onWordOver(this._onWordOver)
 			.onWordOut(this._onWordOut)
             .onWordClick(this._onWordClick);
