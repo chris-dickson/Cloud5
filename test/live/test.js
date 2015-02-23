@@ -36,13 +36,14 @@ function testmain() {
 	});
 
 	$('#addColor').click(function() {
-		var li = $('<li/>');
-		var colorElement = $('<input type="color" value="#000000" class="color">').appendTo(li);
-		var removeBtn = $('<button>Remove</button>').appendTo(li);
+		var colorsContainer = $('#colorsContainer');
+
+		var colorElement = $('<input type="color" value="#000000" class="color">').appendTo(colorsContainer);
+		var removeBtn = $('<button>x</button>').appendTo(colorsContainer);
 		removeBtn.click(function() {
-			colorElement.parent().remove();
+			colorElement.remove();
+			removeBtn.remove();
 		});
-		$('#colorList').append(li);
 	});
 
 }
