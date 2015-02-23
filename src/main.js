@@ -409,5 +409,5 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
     }
 });
 
-
 module.exports = Cloud5;
+module.exports.Stopwords = Stopwords;
