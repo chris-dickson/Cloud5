@@ -47,7 +47,7 @@ function livedemo() {
                 $('#mouseClickWord').html(word);
             });
 
-		if (maxWords > 0) {
+		if (maxWords >= 0) {
 			cloud.maxWords(maxWords);
 		}
 
