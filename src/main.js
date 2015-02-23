@@ -38,9 +38,24 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 	 */
 	canvas : function(canvas) {
 		if (canvas) {
+            var dpr = window.devicePixelRatio;
+            var cWidth = canvas.width;
+            var cHeight = canvas.height;
+            var cssWidth = cWidth;
+            var cssHeight = cHeight;
+            if (dpr > 1) {
+                cWidth *= dpr;
+                cHeight *= dpr;
+            }
+
+
 			this._canvas = canvas;
-			this._width = canvas.width;
-			this._height = canvas.height;
+            this._canvas.width = cWidth;
+            this._canvas.height = cHeight;
+            this._canvas.style.width = cssWidth + 'px';
+            this._canvas.style.height = cssHeight + 'px;'
+			this._width = cWidth;
+			this._height = cHeight;
 			return this;
 		} else {
 			return this._canvas;
@@ -54,10 +69,7 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 	 */
 	width : function(width) {
 		if (width) {
-			if (this._canvas) {
-				this._canvas.width = width;
-				this._width = width;
-			}
+			this.resize(width);
 			return this;
 		} else {
 			return this.width;
@@ -72,14 +84,29 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 	height : function(height) {
 		if (height) {
 			if (this._canvas) {
-				this._canvas.height = height;
-				this._height = height;
+				this.resize(undefined,height);
 			}
 			return this;
 		} else {
 			return this._height;
 		}
 	},
+
+    resize : function(w,h) {
+        var dpr = window.devicePixelRatio;
+        if (w) {
+            this._canvas.width = dpr * w;
+            this._canvas.style.width = w + 'px';
+            this._width =  dpr * w;
+
+        }
+        if (h) {
+            this._canvas.height = dpr * h;
+            this._canvas.style.height = h + 'px';
+            this._height = dpr * h;
+        }
+        return this;
+    },
 
 	/**
 	 * Sets the text for word cloud generation from a large string
@@ -134,7 +161,7 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 	clear : function() {
 		var ctx = this._canvas.getContext('2d');
 		ctx.fillStyle = this._backgroundFill || 'white';
-		ctx.fillRect(0,0,this._canvas.width,this._canvas.height);
+		ctx.fillRect(0,0,this._width,this._height);
 	},
 
 	/**
@@ -327,9 +354,9 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 
 		var renderInfo = this._layout.layout();
 
-		var ctx = this._canvas.getContext('2d');
-		ctx.fillStyle = this._backgroundFill || 'white';
-		ctx.fillRect(0, 0, this._width, this._height);
+		this.clear();
+
+        var ctx = this._canvas.getContext('2d');
 
 
 		this._logger.push('Render');

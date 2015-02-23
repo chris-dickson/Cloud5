@@ -263,6 +263,9 @@ Layout.prototype = _.extend(Layout.prototype, {
 		function onMouseMove(e) {
 			var x = e.offsetX;
 			var y = e.offsetY;
+            var dpr = window.devicePixelRatio;
+            x *= dpr;
+            y *= dpr;
 
 			var word = that._hit(x,y);
 			if (word) {
@@ -281,6 +284,10 @@ Layout.prototype = _.extend(Layout.prototype, {
         function onMouseClick(e) {
             var x = e.offsetX;
             var y = e.offsetY;
+            var dpr = window.devicePixelRatio;
+            x *= dpr;
+            y *= dpr;
+
             var word = that._hit(x,y);
             if (word) {
                 if (that._onWordClick) {
