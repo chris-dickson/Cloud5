@@ -2,6 +2,16 @@
  * Created by chrisdickson on 15-02-16.
  */
 function testmain() {
+
+	var canvas = $('#myCanvas')[0];
+	var canvasContainer = $('.canvas-container');
+
+	$(window).resize(function() {
+		canvas.width = canvasContainer.width();
+	});
+	$(window).resize();
+
+
 	$('#generate').click(function() {
 		var textArea = $('#myText');
 		var text = textArea.val();

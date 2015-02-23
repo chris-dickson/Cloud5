@@ -1,6 +1,9 @@
 var _ = require('./util');
 var Layout = require('./layout');
 var Stopwords = require('./stopwords');
+var Logger = require('./logger');
+
+var perfLog = true;
 
 /**
  * Cloud5 constructor
@@ -8,6 +11,8 @@ var Stopwords = require('./stopwords');
  * @constructor
  */
 var Cloud5 = function(attributes) {
+
+	this._logger = new Logger(perfLog);
 
 	this._words = {};
 	this._stopWords = {};
@@ -124,6 +129,12 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 		}
 	},
 
+	clear : function() {
+		var ctx = this._canvas.getContext('2d');
+		ctx.fillStyle = this._backgroundFill || 'white';
+		ctx.fillRect(0,0,this._canvas.width,this._canvas.height);
+	},
+
 	/**
 	 * Gets/sets the background fill style
 	 * @param fillStyle - a valid fillStyle string
@@ -234,6 +245,20 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 	},
 
 	/**
+	 * Gets/sets the maximum number of words to be rendered in the cloud
+	 * @param maxWords
+	 * @returns {*}
+	 */
+	maxWords : function(maxWords) {
+		if (maxWords) {
+			this._maxWords = maxWords;
+			return this;
+		} else {
+			return this._maxWords;
+		}
+	},
+
+	/**
 	 * Gets/sets colors
 	 * @param color - can be one of the following:
 	 * 		1)  A fillStyle string (ie/ 'red','rgb(255,255,0)', etc)
@@ -275,12 +300,17 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 		if (this._maxFontSize) {
 			layoutAttributes.maxFontSize = this._maxFontSize;
 		}
+		if (this._maxWords) {
+			layoutAttributes.maxWords = this._maxWords;
+		}
 
+		this._logger.push('Layout');
 		this._layout = new Layout(layoutAttributes)
 			.canvas(this._canvas)
 			.words(this._words)
 			.onWordOver(this._onWordOver)
 			.onWordOut(this._onWordOut);
+		this._logger.pop();
 
 		var renderInfo = this._layout.layout();
 
@@ -289,6 +319,7 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 		ctx.fillRect(0, 0, this._width, this._height);
 
 
+		this._logger.push('Render');
 		var that = this;
 		Object.keys(renderInfo).forEach(function(word) {
 			var wordRenderInfo = renderInfo[word];
@@ -316,6 +347,7 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 				}
 			}
 		});
+		this._logger.pop();
 		return this;
 	}
 });

@@ -109,10 +109,19 @@ Layout.prototype = _.extend(Layout.prototype, {
 				maxCount = Math.max(that._words[word],maxCount);
 			});
 
+			// Sort the words by frequency
+			var sortedWordArray = Object.keys(this._words).sort(function(w1,w2) {
+				return that._words[w2]-that._words[w1];
+			});
+
+			if (this.maxWords && sortedWordArray.length > this.maxWords) {
+				sortedWordArray = sortedWordArray.splice(0,this.maxWords);
+			}
+
 
 			var minFontSize = this.minFontSize || 10;
 			var maxFontSize = this.maxFontSize || 200;
-			Object.keys(this._words).forEach(function(word) {
+			sortedWordArray.forEach(function(word) {
 
 				var t = (that._words[word] - minCount)/(maxCount-minCount);
 				var fontSize =_.step(minFontSize,maxFontSize,t);
@@ -124,11 +133,6 @@ Layout.prototype = _.extend(Layout.prototype, {
 				renderInfo[word].maxCount = maxCount;
 			});
 		}
-
-		// Sort the words by frequency
-		var sortedWordArray = Object.keys(this._words).sort(function(w1,w2) {
-			return that._words[w2]-that._words[w1];
-		});
 
 		/**
 		 * Debug routine to draw our words as we lay them out
