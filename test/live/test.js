@@ -18,21 +18,27 @@ function livedemo() {
 		var minFontSize = parseInt($('#minFontSize').val());
 		var maxFontSize = parseInt($('#maxFontSize').val());
 		var fontFamily = $('#fontFamily').val();
+		var maxWords = $('#maxWords').val();
 		var colors = [];
 		$('.color').each(function(index,clrElement) {
 			colors.push($(clrElement).val());
 		});
 		var background = $('#background').val();
 
-		new Cloud5()
+		var cloud = new Cloud5()
 			.canvas($('#myCanvas')[0])
 			.text(text)
 			.minFontSize(minFontSize)
 			.maxFontSize(maxFontSize)
 			.font(fontFamily)
 			.color(colors)
-			.background(background)
-			.generate();
+			.background(background);
+
+		if (maxWords > 0) {
+			cloud.maxWords(maxWords);
+		}
+
+		cloud.generate();
 	});
 
 	$('#addColor').click(function() {
