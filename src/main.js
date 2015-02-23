@@ -362,7 +362,24 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 		});
 		this._logger.pop();
 		return this;
-	}
+	},
+
+    /**
+     * Saves image to local filesystem with the format/filename specified
+     * @param format (optional) - The mimetype to save as.   Default 'image/png'
+     * @param filename (optional) - The filename to save it as.   'download' by default
+     */
+    save : function(format,filename) {
+        var dataURI = this._canvas.toDataURL(format || 'image/png');
+        var uriContent = dataURI.indexOf(',');
+        dataURI = dataURI.substring(uriContent);
+        var link = document.createElement('a');
+        link.href = 'data:application/octet-stream;base64' + dataURI;
+        if (filename) {
+            link.download = filename;
+        }
+        link.click();
+    }
 });
 
 

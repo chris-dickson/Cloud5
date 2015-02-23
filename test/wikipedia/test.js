@@ -170,6 +170,13 @@ function testmain() {
 	var overWordElement = document.createElement('span');
 	document.body.appendChild(overWordElement);
 
+    var saveBtn = document.createElement('button');
+    saveBtn.innerHTML = 'Save'
+    saveBtn.onclick = function() {
+        cloud.save('image/png','wordcloud.png');
+    }
+    document.body.appendChild(saveBtn);
+
 
 	var cloud = new Cloud5()
 		.canvas(canvas)
