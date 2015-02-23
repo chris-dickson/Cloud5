@@ -262,7 +262,7 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 	 * @returns {*}
 	 */
 	maxWords : function(maxWords) {
-		if (maxWords) {
+		if (maxWords !== undefined) {
 			this._maxWords = maxWords;
 			return this;
 		} else {
@@ -312,7 +312,7 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 		if (this._maxFontSize) {
 			layoutAttributes.maxFontSize = this._maxFontSize;
 		}
-		if (this._maxWords) {
+		if (this._maxWords !== undefined) {
 			layoutAttributes.maxWords = this._maxWords;
 		}
 
