@@ -16,6 +16,7 @@
 
     <!-- Custom CSS -->
     <link href="css/simple-sidebar.css" rel="stylesheet">
+    <link href="test/live/style.css" rel="stylesheet">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -23,6 +24,8 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+
+    <script src="test/live/test.js"></script>
 
 </head>
 
@@ -42,13 +45,10 @@
                     <a href="#overview">Overview</a>
                 </li>
                 <li>
-                    <a href="#examples">Examples</a>
-                </li>
-                <li>
                     <a href="#demo">Demo</a>
                 </li>
                 <li>
-                    <a href="#developers">Getting Started</a>
+                    <a href="#gettingstarted">Getting Started</a>
                 </li>
                 <li>
                     <a href="#contact">Contact</a>
@@ -68,11 +68,51 @@
                         <h3 id="#overview">Overview</h3>
                         <p>Unlike other word cloud libraries that rely on a server, Cloud5 runs entirely within your web browser.   No backend necessary.</p>
 
-                        <h3 id="#exmaples">Examples</h3>
-                        <p>Coming soon!</p>
-
                         <h3 id="#demo">Demo</h3>
-                        <p>Coming soon!</p>
+                            <p>Enter some text in the text area below and click generate to see a word cloud.</p>
+                            <div class="row">
+                                <div class="col-md-12 canvas-container">
+                                    <canvas id="myCanvas" width="500" height="300"></canvas>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="control">
+                                        <label>Text:</label>
+                                        <textarea id="myText"></textarea>
+                                    </div>
+                                    <div class="control">
+                                        <button id="generate">Generate</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="controls" class="row">
+                                <div class="col-md-6">
+                                    <div class="control">
+                                        <label>Min Font Size (px):</label><input class="textInput" type="number" id="minFontSize" value="10" min="1">
+                                    </div>
+                                    <div class="control">
+                                        <label>Max Font Size (px):</label><input class="textInput" type="number" id="maxFontSize" value="100" min="1">
+                                    </div>
+                                    <div class="control">
+                                        <label>Font Family:</label><input class="textInput" id="fontFamily" value="Calibri">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div id="colorsContainer" class="control">
+                                        <label>Colors:</label>
+                                        <button id="addColor">+</button>
+                                        <input type="color" value="#000000" class="color">
+                                    </div>
+
+
+                                    <div class="control">
+                                        <label>Background:</label><input id="background" type="color" value="#ffffff">
+                                    </div>
+                                </div>
+                            </div>
 
                         <h3 id="#gettingstarted">Getting Started</h3>
                         <p>Coming soon!</p>
@@ -101,6 +141,7 @@
         e.preventDefault();
         $("#wrapper").toggleClass("toggled");
     });
+    livedemo();
     </script>
 
 </body>

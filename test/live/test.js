@@ -1,7 +1,7 @@
 /**
  * Created by chrisdickson on 15-02-16.
  */
-function testmain() {
+function livedemo() {
 
 	var canvas = $('#myCanvas')[0];
 	var canvasContainer = $('.canvas-container');
