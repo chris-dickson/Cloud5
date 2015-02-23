@@ -168,7 +168,7 @@ Layout.prototype = _.extend(Layout.prototype, {
 				return that._words[w2]-that._words[w1];
 			});
 
-			if (this.maxWords && sortedWordArray.length > this.maxWords) {
+			if (this.maxWords > 0 && sortedWordArray.length > this.maxWords) {
 				sortedWordArray = sortedWordArray.splice(0,this.maxWords);
 			}
 
