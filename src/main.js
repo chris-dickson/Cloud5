@@ -22,6 +22,8 @@ var Cloud5 = function(attributes) {
 	this._height = null;
 	this._backgroundFill = null;
 	this._onWordOver = null;
+    this._onWordOut = null;
+    this._onWordClick = null;
 	this._layout = null;
 
 	_.extend(this,attributes);
@@ -202,6 +204,16 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 		return this;
 	},
 
+    /**
+     * Set a handler for clicking on a word
+     * @param handler
+     * @returns {Cloud5}
+     */
+    onWordClick : function(handler) {
+        this._onWordClick = handler;
+        return this;
+    },
+
 	/**
 	 * Gets/sets the font family for words
 	 * @param font - font family (ie/ 'Helvetica')
@@ -309,7 +321,8 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 			.canvas(this._canvas)
 			.words(this._words)
 			.onWordOver(this._onWordOver)
-			.onWordOut(this._onWordOut);
+			.onWordOut(this._onWordOut)
+            .onWordClick(this._onWordClick);
 		this._logger.pop();
 
 		var renderInfo = this._layout.layout();

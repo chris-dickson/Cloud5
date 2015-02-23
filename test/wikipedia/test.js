@@ -189,7 +189,10 @@ function testmain() {
 		})
 		.onWordOut(function(word) {
 			overWordElement.innerHTML = '';
-		});
+		})
+        .onWordClick(function(word) {
+            alert(word);
+        });
 
 
 	cloud.generate();
