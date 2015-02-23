@@ -3,6 +3,7 @@
  */
 function livedemo() {
 
+    var cloud = new Cloud5();
 	var canvas = $('#myCanvas')[0];
 	var canvasContainer = $('.canvas-container');
 
@@ -29,14 +30,22 @@ function livedemo() {
 		});
 		var background = $('#background').val();
 
-		var cloud = new Cloud5()
-			.canvas($('#myCanvas')[0])
+		cloud.canvas($('#myCanvas')[0])
 			.text(text)
 			.minFontSize(minFontSize)
 			.maxFontSize(maxFontSize)
 			.font(fontFamily)
 			.color(colors)
-			.background(background);
+			.background(background)
+            .onWordOver(function(word) {
+                $('#mouseOverWord').html(word);
+            })
+            .onWordOut(function() {
+                $('#mouseOverWord').html('');
+            })
+            .onWordClick(function(word) {
+                $('#mouseClickWord').html(word);
+            });
 
 		if (maxWords > 0) {
 			cloud.maxWords(maxWords);
@@ -55,5 +64,11 @@ function livedemo() {
 			removeBtn.remove();
 		});
 	});
+
+    $('#download').click(function() {
+        if (cloud) {
+            cloud.save('image/png','wordcloud.png');
+        }
+    })
 
 }

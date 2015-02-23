@@ -116,11 +116,6 @@ var cloud = new Cloud5()
                         <h3 id="#demo">Demo</h3>
                             <p>Enter some text in the text area below and click generate to see a word cloud.</p>
                             <div class="row">
-                                <div class="col-md-12 canvas-container">
-                                    <canvas id="myCanvas" width="500" height="300"></canvas>
-                                </div>
-                            </div>
-                            <div class="row">
                                 <div class="col-md-12">
                                     <div class="control">
                                         <label>Text:</label>
@@ -129,6 +124,7 @@ var cloud = new Cloud5()
                                     <div class="control">
                                         <button id="generate">Generate</button>
                                         <button id="sample">Sample Text</button>
+                                        <button id="download">Download</button>
                                     </div>
                                 </div>
                             </div>
@@ -151,18 +147,31 @@ var cloud = new Cloud5()
 
                                 <div class="col-md-6">
                                     <div id="colorsContainer" class="control">
-                                        <label>Colors:</label>
+                                        <label>Colors</label>
                                         <button id="addColor">+</button>
                                         <input type="color" value="#000000" class="color">
                                     </div>
 
 
                                     <div class="control">
-                                        <label>Background:</label><input id="background" type="color" value="#ffffff">
+                                        <label>Background</label><input id="background" type="color" value="#ffffff">
+                                    </div>
+                                    <div class="control">
+                                        <label>Hover</label>
+                                        <span class="wordLabel" id="mouseOverWord"></span>
+                                    </div>
+                                    <div class="control">
+                                        <label>Clicked</label>
+                                        <span class="wordLabel" id="mouseClickWord"></span>
                                     </div>
                                 </div>
                             </div>
 
+                            <div class="row">
+                                <div class="col-md-12 canvas-container">
+                                    <canvas id="myCanvas" width="500" height="300"></canvas>
+                                </div>
+                            </div>
                         <!-- <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a> -->
                         <h3 id="#contact">Contact</h3>
                         <p><a href="mailto:cloudfive.js@gmail.com">cloudfive.js@gmail.com</a></p>
