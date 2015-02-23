@@ -1,10 +1,14 @@
 {
-  "name": "graphjs",
+  "name": "Cloud5",
   "version": "0.0.1",
   "description": "A package for creating word/tag clouds in Javascript using HTML5 canvas",
   "main": "index.js",
   "scripts": {
     "build": "gulp compile"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/chris-dickson/Cloud5.git"
   },
   "author": "Chris Dickson",
   "license": "MIT",
