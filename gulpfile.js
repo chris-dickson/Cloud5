@@ -37,7 +37,7 @@ gulp.task('build', function() {
   return browserify('./'+config.src+'/main.js')
     .external(config.externalLibs)
     .bundle({
-      debug : 'true',
+      debug : false,
       standalone: 'Cloud5'
     })
     .pipe(source('Cloud5.js'))

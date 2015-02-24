@@ -111,6 +111,11 @@ Layout.prototype = _.extend(Layout.prototype, {
 		}
 	},
 
+    layouter : function(handler) {
+        this._layouter = handler;
+        return this;
+    },
+
 	/**
 	 * Set wordOver handler
 	 * @param handler
@@ -139,6 +144,97 @@ Layout.prototype = _.extend(Layout.prototype, {
     onWordClick : function(handler) {
         this._onWordClick = handler;
         return this;
+    },
+
+    /**
+     * Places a word with the given render info into the scene.  Update the
+     * scene boolean bitmap
+     * @param word - string
+     * @param renderInfo - render info from the text bitmapper
+     */
+    place : function(word,renderInfo) {
+        var bitmapWidth = renderInfo.bitmap.length;
+        var bitmapHeight = renderInfo.bitmap[0].length;
+
+        for (var i = 0; i < bitmapWidth; i++) {
+            for (var j = 0; j < bitmapHeight; j++) {
+                var u = renderInfo.x + renderInfo.bb.offsetX + i;
+                var v = renderInfo.y + renderInfo.bb.offsetY + j;
+
+                if (renderInfo.bitmap[i][j]) {
+                    this._bitmap[u][v] = word;
+                }
+            }
+        }
+    },
+
+    /**
+     *
+     * @param renderInfo
+     * @returns {*|boolean}
+     */
+    fits : function(renderInfo) {
+        return this._textBitmapper.fits(renderInfo,this._bitmap)
+    },
+
+
+    randomLayout : function(words,renderInfo,width,height) {
+        // Layout each word
+        var that = this;
+        words.forEach(function(word) {
+            var placed = false;
+            var attempts = 100;
+
+            if (this.debug) {
+                that.debugDrawAll();
+            }
+
+            var wordRenderInfo = renderInfo[word];
+
+            // Try placing the word and see if it fits/hits anything else already placed
+            while (!placed && attempts > 0) {
+                var x = Math.floor(Math.random() * width);
+                var y = Math.floor(Math.random() * height);
+
+                wordRenderInfo.x = x;
+                wordRenderInfo.y = y;
+
+                // If it fits, update the bitmap for the entire scene to say those pixels are occupied
+                if (that.fits(wordRenderInfo)) {
+                    placed = true;
+                    that.place(word, wordRenderInfo);
+
+                } else {
+                    attempts--;
+                }
+            }
+            if (!placed) {
+                wordRenderInfo.x = -1;
+                wordRenderInfo.y = -1;
+            }
+        });
+    },
+
+    /**
+     * Debug routine to draw our words as we lay them out
+     * @param ctx - canvas context
+     * @param w - width
+     * @param h - height
+     */
+    debugDrawAll : function() {
+		var ctx = this._canvas.getContext('2d');
+        ctx.clearRect(0,0,this._canvas.width,this._canvas.height);
+        var that = this;
+        Object.keys(this._renderInfo).forEach(function(word) {
+            var wordRenderInfo = that._renderInfo[word];
+            if (wordRenderInfo.x !== undefined && wordRenderInfo.x !== -1 && wordRenderInfo.y !== undefined && wordRenderInfo.y !== -1) {
+                ctx.font = wordRenderInfo.fontSize + 'px ' + wordRenderInfo.fontFamily;
+                ctx.fillStyle = 'red';
+                ctx.strokeStyle = 'green';
+                ctx.fillText(word,wordRenderInfo.x,wordRenderInfo.y);
+                ctx.strokeRect(wordRenderInfo.x + wordRenderInfo.bb.offsetX, wordRenderInfo.y + wordRenderInfo.bb.offsetY, wordRenderInfo.bb.width, wordRenderInfo.bb.height);
+            }
+        });
     },
 
 
@@ -189,74 +285,41 @@ Layout.prototype = _.extend(Layout.prototype, {
 			});
 		}
 
-		/**
-		 * Debug routine to draw our words as we lay them out
-		 * @param ctx - canvas context
-		 * @param w - width
-		 * @param h - height
-		 */
-		function debugDrawAll(ctx,w,h) {
-			ctx.fillStyle = 'white';
-			ctx.fillRect(0,0,w,h);
-            var that = this;
-			Object.keys(this._renderInfo).forEach(function(word) {
-				var wordRenderInfo = that._renderInfo[word];
-				if (wordRenderInfo.x !== undefined && wordRenderInfo.x !== -1 && wordRenderInfo.y !== undefined && wordRenderInfo.y !== -1) {
-					ctx.font = wordRenderInfo.fontSize + 'px ' + wordRenderInfo.fontFamily;
-					ctx.fillStyle = 'red';
-					ctx.strokeStyle = 'green';
-					ctx.fillText(word,wordRenderInfo.x,wordRenderInfo.y);
-					ctx.strokeRect(wordRenderInfo.x + wordRenderInfo.bb.offsetX, wordRenderInfo.y + wordRenderInfo.bb.offsetY, wordRenderInfo.bb.width, wordRenderInfo.bb.height);
+		// If we have a mask, set the boolean bitmap to reflect it
+		if (this.maskCanvas) {
+			var maskWidth = this.maskCanvas.width;
+			var maskHeight = this.maskCanvas.height;
+			var maskCtx = this.maskCanvas.getContext('2d');
+
+			var imageData = maskCtx.getImageData(0,0,maskWidth,maskHeight);
+			var maskX = 0;
+			var maskY = 0;
+
+			for (var x = 0; x < this._canvas.width; x++) {
+				for (var y = 0; y < this._canvas.height; y++) {
+					this._bitmap[x][y] = true;
 				}
-			});
+			}
+
+			for (var i = 0; i < imageData.data.length; i+=4) {
+				var mask = imageData.data[i+3] > 0;
+				if (mask && maskX < this._canvas.width && maskY < this._canvas.height) {
+					this._bitmap[maskX][maskY] = false;
+				}
+				maskX++;
+				if (maskX === maskWidth) {
+					maskX = 0;
+					maskY++;
+				}
+			}
 		}
 
-		// Layout each word
-		sortedWordArray.forEach(function(word) {
-			var placed = false;
-			var attempts = 100;
-
-			if (this.debug) {
-				debugDrawAll(that._canvas.getContext('2d'),that._canvas.width, that._canvas.height);
-			}
-
-            var renderInfo = that._renderInfo[word];
-
-			// Try placing the word and see if it fits/hits anything else already placed
-			while (!placed && attempts > 0) {
-				var x = Math.floor(Math.random() * that._canvas.width);
-				var y = Math.floor(Math.random() * that._canvas.height);
-
-				renderInfo.x = x;
-				renderInfo.y = y;
-
-				// If it fits, update the bitmap for the entire scene to say those pixels are occupied
-				if (that._textBitmapper.fits(renderInfo,that._bitmap)) {
-					placed = true;
-
-					var bitmapWidth = renderInfo.bitmap.length;
-					var bitmapHeight = renderInfo.bitmap[0].length;
-
-					for (var i = 0; i < bitmapWidth; i++) {
-						for (var j = 0; j < bitmapHeight; j++) {
-							var u = renderInfo.x + renderInfo.bb.offsetX + i;
-							var v = renderInfo.y + renderInfo.bb.offsetY + j;
-
-							if (renderInfo.bitmap[i][j]) {
-								that._bitmap[u][v] = word;
-							}
-						}
-					}
-
-				} else {
-					attempts--;
-				}
-			}
-			if (!placed) {
-				renderInfo.x = -1;
-				renderInfo.y = -1;
-			}
-		});
+        // Call custom layouter if provided
+        if (this._layouter) {
+            this._layouter.call(this,sortedWordArray,that._renderInfo,this._canvas.width,this._canvas.height,this.fits,this.place);
+        } else {
+            this.randomLayout(sortedWordArray, that._renderInfo,this._canvas.width,this._canvas.height);
+        }
 
 
 		// Bind handlers
@@ -272,18 +335,18 @@ Layout.prototype = _.extend(Layout.prototype, {
 			if (word) {
                 if (overWord) {
                     if (that._onWordOut) {
-                        that._onWordOut(overWord);
+                        that._onWordOut(overWord,e);
                     }
                     overWord = null;
                 }
 
 				if (that._onWordOver) {
-					that._onWordOver(word);
+					that._onWordOver(word,e);
 				}
 				overWord = word;
 			} else {
                 if (that._onWordOut) {
-                    that._onWordOut(overWord);
+                    that._onWordOut(overWord,e);
                 }
                 overWord = null;
             }
@@ -299,7 +362,7 @@ Layout.prototype = _.extend(Layout.prototype, {
             var word = that._hit(x,y);
             if (word) {
                 if (that._onWordClick) {
-                    that._onWordClick(word);
+                    that._onWordClick(word,e);
                 }
             }
         }

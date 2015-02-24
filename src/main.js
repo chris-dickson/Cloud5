@@ -3,7 +3,7 @@ var Layout = require('./layout');
 var Stopwords = require('./stopwords');
 var Logger = require('./logger');
 
-var perfLog = true;
+var perfLog = false;
 
 /**
  * Cloud5 constructor
@@ -151,7 +151,7 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 	 * @returns {Cloud5}
 	 */
 	text : function(text) {
-		var filtered = text.replace(/[\.,-\/#!$%\^&\*;:{}=\-_`~()]/g,'');
+		var filtered = text.replace(/[\.,-\/#!?$%\^&\*;:{}=\-_`~()]/g,'');
 		if (this._filters) {
 			this._filters.forEach(function(filter) {
 				filtered = text.replace(filter,'');
@@ -159,6 +159,28 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 		}
 		var words = filtered.split(' ');
 		this.words(words);
+		return this;
+	},
+
+	mask : function(maskUrl,callback) {
+		var img = new Image();
+		img.src = maskUrl;
+		var that = this;
+		img.onload = function() {
+			var width = img.width;
+			var height = img.height;
+			that.resize(width,height);
+
+			that._maskCanvas = document.createElement('canvas');
+			that._maskCanvas.width = width;
+			that._maskCanvas.height = height;
+
+			var context = that._maskCanvas.getContext('2d');
+			context.fillStyle = 'rgba(0,0,0,0)';
+			context.fillRect(0,0,that._maskCanvas.width,that._maskCanvas.height);
+			context.drawImage(img,0,0);
+			callback();
+		};
 		return this;
 	},
 
@@ -247,6 +269,23 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 		}
 	},
 
+    wordMap : function(wordMap) {
+        if (wordMap) {
+            var that = this;
+            Object.keys(wordMap).forEach(function(raw) {
+                var word = raw.trim().toLowerCase();
+                if (that._stopWords[word] || word === '') {
+                    return;
+                }
+                var count = wordMap[word] ? wordMap[word] : 1;
+                that._words[word] = count;
+            });
+            return this;
+        } else {
+            return this._words;
+        }
+    },
+
     highlight : function(words,color) {
         if (words instanceof Array === false) {
             words = [words];
@@ -259,13 +298,17 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
     },
 
     unhighlight : function(words) {
-        if (words instanceof Array === false) {
-            words = [words];
+        if (!words) {
+            this._highlightedWords = {};
+        } else {
+            if (words instanceof Array === false) {
+                words = [words];
+            }
+            var that = this;
+            words.forEach(function (word) {
+                delete that._highlightedWords[word]
+            });
         }
-        var that = this;
-        words.forEach(function(word) {
-            delete that._highlightedWords[word]
-        });
         this._updateHightlight();
     },
 
@@ -394,6 +437,11 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 		}
 	},
 
+    layout : function(handler) {
+        this._layout = handler;
+        return this;
+    },
+
 	/**
 	 * Layout and render the word cloud to the canvas provided
 	 * @returns {Cloud5}
@@ -415,11 +463,15 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 		if (this._maxWords !== undefined) {
 			layoutAttributes.maxWords = this._maxWords;
 		}
+		if (this._maskCanvas) {
+			layoutAttributes.maskCanvas = this._maskCanvas;
+		}
 
 		this._logger.push('Layout');
 		this._layout = new Layout(layoutAttributes)
 			.canvas(this._canvas)
 			.words(this._words)
+            .layouter(this._layout)
 			.onWordOver(this._onWordOver)
 			.onWordOut(this._onWordOut)
             .onWordClick(this._onWordClick);
@@ -446,7 +498,7 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 						var idx = Math.floor(Math.random() * that._color.length);
 						clr = that._color[idx];
 					} else if (that._color instanceof Function) {
-						clr = that._color(wordRenderInfo);
+						clr = that._color(wordRenderInfo,word);
 					} else {
 						clr = that._color;
 					}
