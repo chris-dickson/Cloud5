@@ -186,7 +186,7 @@ Layout.prototype = _.extend(Layout.prototype, {
             var attempts = 100;
 
             if (this.debug) {
-                that.debugDrawAll(that._canvas.getContext('2d'), width, height);
+                that.debugDrawAll();
             }
 
             var wordRenderInfo = renderInfo[word];
@@ -221,9 +221,9 @@ Layout.prototype = _.extend(Layout.prototype, {
      * @param w - width
      * @param h - height
      */
-    debugDrawAll : function(ctx,w,h) {
-        ctx.fillStyle = 'white';
-        ctx.fillRect(0,0,w,h);
+    debugDrawAll : function() {
+		var ctx = this._canvas.getContext('2d');
+        ctx.clearRect(0,0,this._canvas.width,this._canvas.height);
         var that = this;
         Object.keys(this._renderInfo).forEach(function(word) {
             var wordRenderInfo = that._renderInfo[word];

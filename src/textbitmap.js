@@ -133,6 +133,8 @@ TextBitmap.prototype = _.extend(TextBitmap.prototype, {
 	 * @returns {boolean} - true if word fits, false otherwise
 	 */
 	fits : function(renderInfo,bitmap) {
+		renderInfo.x = Math.floor(renderInfo.x);
+		renderInfo.y = Math.floor(renderInfo.y);
 
 		var startX = renderInfo.x + renderInfo.bb.offsetX;
 		var startY = renderInfo.y + renderInfo.bb.offsetY;
