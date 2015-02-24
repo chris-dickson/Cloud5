@@ -91,7 +91,7 @@ var cloud = new Cloud5()
 
 
 
-                        <h4>Advanced Example</h4>
+                        <h4>Events</h4>
                         <pre class="prettyprint">
 var text = // a big text string
 var cloud = new Cloud5()
@@ -175,6 +175,24 @@ cloud.layout(customLayouter);
                         <img src="./img/pet.png" width="45%" style="float:right">
                         <div style="clear:both"/>
                         <p>Left: CBC Reporters, Right: Pierre Trudeau</p>
+
+                        <h4>Masking</h4>
+                        <p>We can provide an image that will act as a mask for the word cloud.   Any pixel that has it's alpha > 0 will be a valid word location.</p>
+                        <pre class="prettyprint">
+var cloud = new Cloud5()
+    .canvas(canvas)
+    .text(canada)
+    .font('Helvetica')
+    .minFontSize(5)
+    .color(['#ff0000','#ee0000','#dd0000','#cc0000','#bb0000','#aa0000','#990000'])
+    .mask('./mask.png',function() {
+        cloud.generate();
+    });
+                        </pre>
+                        <p>The mask used above followed by the word cloud generated from the <a href="http://en.wikipedia.org/wiki/Canada">Wikipedia article on Canada</a></p>
+                        <img src="img/mask.png" width="100%">
+                        <img src="img/canada.png" width="100%">
+
 
                         <h3 id="demo">Demo</h3>
                             <p>Enter some text in the text area below and click generate to see a word cloud.</p>
