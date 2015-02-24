@@ -349,8 +349,9 @@ Layout.prototype = _.extend(Layout.prototype, {
 		// Bind handlers
 		var overWord = null;
 		function onMouseMove(e) {
-			var x = e.offsetX;
-			var y = e.offsetY;
+            var x = e.offsetX==undefined?e.layerX:e.offsetX;
+            var y = e.offsetY==undefined?e.layerY:e.offsetY;
+
             var dpr = window.devicePixelRatio;
             x *= dpr;
             y *= dpr;
@@ -377,8 +378,9 @@ Layout.prototype = _.extend(Layout.prototype, {
 		}
 
         function onMouseClick(e) {
-            var x = e.offsetX;
-            var y = e.offsetY;
+            var x = e.offsetX==undefined?e.layerX:e.offsetX;
+            var y = e.offsetY==undefined?e.layerY:e.offsetY;
+            
             var dpr = window.devicePixelRatio;
             x *= dpr;
             y *= dpr;
