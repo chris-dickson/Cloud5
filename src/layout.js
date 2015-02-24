@@ -334,18 +334,18 @@ Layout.prototype = _.extend(Layout.prototype, {
 			if (word) {
                 if (overWord) {
                     if (that._onWordOut) {
-                        that._onWordOut(overWord);
+                        that._onWordOut(overWord,e);
                     }
                     overWord = null;
                 }
 
 				if (that._onWordOver) {
-					that._onWordOver(word);
+					that._onWordOver(word,e);
 				}
 				overWord = word;
 			} else {
                 if (that._onWordOut) {
-                    that._onWordOut(overWord);
+                    that._onWordOut(overWord,e);
                 }
                 overWord = null;
             }
@@ -361,7 +361,7 @@ Layout.prototype = _.extend(Layout.prototype, {
             var word = that._hit(x,y);
             if (word) {
                 if (that._onWordClick) {
-                    that._onWordClick(word);
+                    that._onWordClick(word,e);
                 }
             }
         }

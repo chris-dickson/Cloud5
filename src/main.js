@@ -3,7 +3,7 @@ var Layout = require('./layout');
 var Stopwords = require('./stopwords');
 var Logger = require('./logger');
 
-var perfLog = true;
+var perfLog = false;
 
 /**
  * Cloud5 constructor
@@ -269,6 +269,23 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 		}
 	},
 
+    wordMap : function(wordMap) {
+        if (wordMap) {
+            var that = this;
+            Object.keys(wordMap).forEach(function(raw) {
+                var word = raw.trim().toLowerCase();
+                if (that._stopWords[word] || word === '') {
+                    return;
+                }
+                var count = wordMap[word] ? wordMap[word] : 1;
+                that._words[word] = count;
+            });
+            return this;
+        } else {
+            return this._words;
+        }
+    },
+
     highlight : function(words,color) {
         if (words instanceof Array === false) {
             words = [words];
@@ -281,13 +298,17 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
     },
 
     unhighlight : function(words) {
-        if (words instanceof Array === false) {
-            words = [words];
+        if (!words) {
+            this._highlightedWords = {};
+        } else {
+            if (words instanceof Array === false) {
+                words = [words];
+            }
+            var that = this;
+            words.forEach(function (word) {
+                delete that._highlightedWords[word]
+            });
         }
-        var that = this;
-        words.forEach(function(word) {
-            delete that._highlightedWords[word]
-        });
         this._updateHightlight();
     },
 
@@ -477,7 +498,7 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 						var idx = Math.floor(Math.random() * that._color.length);
 						clr = that._color[idx];
 					} else if (that._color instanceof Function) {
-						clr = that._color(wordRenderInfo);
+						clr = that._color(wordRenderInfo,word);
 					} else {
 						clr = that._color;
 					}
