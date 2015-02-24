@@ -48,6 +48,9 @@
                     <a href="#gettingstarted">Getting Started</a>
                 </li>
                 <li>
+                    <a href="#examples">Examples</a>
+                </li>
+                <li>
                     <a href="#demo">Demo</a>
                 </li>
                 <li>
@@ -73,6 +76,7 @@
                         <p>To build from source code, please visit the <a href="https://github.com/chris-dickson/Cloud5">Cloud5 Github Page</a> and follow the instructions listed.</p>
                         <p>To start generating word clouds, simply include the source file in your webpage.</p>
 
+                        <h3 id="examples">Examples</h3>
                         <h4>Basic Example</h4>
                         <p>We will be using the text from <a href="http://www.americanrhetoric.com/speeches/jfkinaugural.htm">John F. Kennedy's Inaugural Address in 1961</a>.  By default, we strip punctuation from the text string and convert all strings to lowercase.</p>
                         <pre class="prettyprint">
@@ -87,7 +91,7 @@ var cloud = new Cloud5()
 
 
 
-                        <h3>Advanced Example</h3>
+                        <h4>Events</h4>
                         <pre class="prettyprint">
 var text = // a big text string
 var cloud = new Cloud5()
@@ -118,6 +122,77 @@ var cloud = new Cloud5()
                         string and that word will be rendered the given color.</p>
                         <p>An example using the above setup and the article on the Preamble to the Constitution:</p>
                         <img src="img/sample2.png" width="100%">
+
+                        <h4 id="customLayouts">Custom Layouts</h4>
+                        <p>It is possible to define custom layout functions in Cloud5.   Here, we write a function that
+                        performs a radial layout by starting in the center of the canvas and slowly increases the radius
+                         where we're allowed to place words.   The result is words clustering around the center of the canvas.</p>
+                        <pre class="prettyprint">
+var customLayouter = function(words,renderInfo,width,height) {
+    var that = this;
+    var startX = width/2;
+    var startY = height/2;
+    var maxRadius = Math.min(width,height) * 0.5;
+
+    words.forEach(function(word) {
+
+        var placed = false;
+        for (var i = 10; i > 0 && !placed; i--) {
+            var minRadius = maxRadius * (1/i);
+
+            for (var t = 0; t <= 1 && !placed; t+= (1/50)) {
+                var searchRadius = minRadius + (maxRadius-minRadius)*t;
+                var theta = Math.random() * Math.PI * 2;
+                var r = Math.random() * searchRadius;
+
+                // Apply a shift no more than the width of word to avoid bunching on the right
+                var shiftX = -(Math.random() * renderInfo[word].bb.width);
+                var shiftY = -(Math.random() * renderInfo[word].bb.height);
+
+                renderInfo[word].x = startX + r * Math.sin(theta) + shiftX;
+                renderInfo[word].y = startY + r * Math.cos(theta) + shiftY;
+
+                if (that.fits(renderInfo[word])) {
+                    placed = true;
+                    that.place(word,renderInfo[word]);
+                }
+            }
+        }
+        if (!placed) {
+            renderInfo[word].x = -1;
+            renderInfo[word].y = -1;
+        }
+    });
+};
+
+...
+cloud.layout(customLayouter);
+                        </pre>
+                        <p>The following two word clouds were generated using the above layout algorithm
+                        using the transcript from the <a href="http://en.wikipedia.org/wiki/Just_watch_me">"Just Watch Me"</a> interview.   <a href="http://faculty.marianopolis.edu/c.belanger/quebechistory/docs/october/watchme.htm">[Source]</a>.   We generate one for
+                        the interviewers and one for Pierre Trudeau.</p>
+                        <img src="./img/cbc.png" width="45%" style="float:left;">
+                        <img src="./img/pet.png" width="45%" style="float:right">
+                        <div style="clear:both"/>
+                        <p>Left: CBC Reporters, Right: Pierre Trudeau</p>
+
+                        <h4>Masking</h4>
+                        <p>We can provide an image that will act as a mask for the word cloud.   Any pixel that has it's alpha > 0 will be a valid word location.</p>
+                        <pre class="prettyprint">
+var cloud = new Cloud5()
+    .canvas(canvas)
+    .text(canada)
+    .font('Helvetica')
+    .minFontSize(5)
+    .color(['#ff0000','#ee0000','#dd0000','#cc0000','#bb0000','#aa0000','#990000'])
+    .mask('./mask.png',function() {
+        cloud.generate();
+    });
+                        </pre>
+                        <p>The mask used above followed by the word cloud generated from the <a href="http://en.wikipedia.org/wiki/Canada">Wikipedia article on Canada</a></p>
+                        <img src="img/mask.png" width="100%">
+                        <img src="img/canada.png" width="100%">
+
 
                         <h3 id="demo">Demo</h3>
                             <p>Enter some text in the text area below and click generate to see a word cloud.</p>
