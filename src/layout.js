@@ -285,6 +285,35 @@ Layout.prototype = _.extend(Layout.prototype, {
 			});
 		}
 
+		// If we have a mask, set the boolean bitmap to reflect it
+		if (this.maskCanvas) {
+			var maskWidth = this.maskCanvas.width;
+			var maskHeight = this.maskCanvas.height;
+			var maskCtx = this.maskCanvas.getContext('2d');
+
+			var imageData = maskCtx.getImageData(0,0,maskWidth,maskHeight);
+			var maskX = 0;
+			var maskY = 0;
+
+			for (var x = 0; x < this._canvas.width; x++) {
+				for (var y = 0; y < this._canvas.height; y++) {
+					this._bitmap[x][y] = true;
+				}
+			}
+
+			for (var i = 0; i < imageData.data.length; i+=4) {
+				var mask = imageData.data[i+3] > 0;
+				if (mask && maskX < this._canvas.width && maskY < this._canvas.height) {
+					this._bitmap[maskX][maskY] = false;
+				}
+				maskX++;
+				if (maskX === maskWidth) {
+					maskX = 0;
+					maskY++;
+				}
+			}
+		}
+
         // Call custom layouter if provided
         if (this._layouter) {
             this._layouter.call(this,sortedWordArray,that._renderInfo,this._canvas.width,this._canvas.height,this.fits,this.place);

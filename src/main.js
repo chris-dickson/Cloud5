@@ -162,6 +162,28 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 		return this;
 	},
 
+	mask : function(maskUrl,callback) {
+		var img = new Image();
+		img.src = maskUrl;
+		var that = this;
+		img.onload = function() {
+			var width = img.width;
+			var height = img.height;
+			that.resize(width,height);
+
+			that._maskCanvas = document.createElement('canvas');
+			that._maskCanvas.width = width;
+			that._maskCanvas.height = height;
+
+			var context = that._maskCanvas.getContext('2d');
+			context.fillStyle = 'rgba(0,0,0,0)';
+			context.fillRect(0,0,that._maskCanvas.width,that._maskCanvas.height);
+			context.drawImage(img,0,0);
+			callback();
+		};
+		return this;
+	},
+
 	/**
 	 * Gets/sets a list of text filters (regular expressions) to be applied.   Rules that match will be deleted
 	 * from the original text string.  They're applied in the order given to this function
@@ -419,6 +441,9 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 		}
 		if (this._maxWords !== undefined) {
 			layoutAttributes.maxWords = this._maxWords;
+		}
+		if (this._maskCanvas) {
+			layoutAttributes.maskCanvas = this._maskCanvas;
 		}
 
 		this._logger.push('Layout');
