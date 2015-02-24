@@ -3,7 +3,8 @@
  */
 function testmain() {
 
-	var canvas = document.getElementById('myCanvas');
+	var cbcCanvas = document.getElementById('cbcCanvas');
+	var petCanvas = document.getElementById('petCanvas');
 
 	/**
 	 * Perform a custom radial layout by expanding the search radius around the center at each attempt.
@@ -47,22 +48,43 @@ function testmain() {
         });
     };
 
+	var font = 'Helvetica';
+	var minFontSize = 10;
+	var maxFontSize = 80;
+	var radius = 800;
+	var background = '#eeeeee';
+	var stopwords = Cloud5.Stopwords.English.concat('people','protect');
+	var colors = ['#443333','#995555','#ee8833','#ff5522'];
 
-	var cloud = new Cloud5()
-		.canvas(canvas)
+
+
+	var CBCCloud = new Cloud5()
+		.canvas(cbcCanvas)
         .layout(customLayouter)
-		.stop(Cloud5.Stopwords.French)
-		.width(1600)
-		.height(800)
-		.font('Helvetica')
-		.minFontSize(10)
-		.maxFontSize(240)
-		.maxWords(1000)
-		.background('#eeeeee')
-		.text(redIsTheNight)
-		.color(['#443333','#995555','#ee8833','#ff5522']);
+		.stop(stopwords)
+		.width(radius)
+		.height(radius)
+		.font(font)
+		.minFontSize(minFontSize)
+		.maxFontSize(maxFontSize)
+		.background(background)
+		.text(CBC)
+		.color(colors);
+	CBCCloud.generate().save('image/png','cbc.png');
 
+	var PETCloud = new Cloud5()
+		.canvas(petCanvas)
+		.layout(customLayouter)
+		.stop(stopwords)
+		.width(radius)
+		.height(radius)
+		.font(font)
+		.minFontSize(minFontSize)
+		.maxFontSize(maxFontSize)
+		.background(background)
+		.text(PET)
+		.color(colors);
 
-	cloud.generate()
-		.save();
+	PETCloud.generate().save('image/png','pet.png');
+
 }
