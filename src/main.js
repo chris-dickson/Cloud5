@@ -151,7 +151,7 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 	 * @returns {Cloud5}
 	 */
 	text : function(text) {
-		var filtered = text.replace(/[\.,-\/#!$%\^&\*;:{}=\-_`~()]/g,'');
+		var filtered = text.replace(/[\.,-\/#!?$%\^&\*;:{}=\-_`~()]/g,'');
 		if (this._filters) {
 			this._filters.forEach(function(filter) {
 				filtered = text.replace(filter,'');
