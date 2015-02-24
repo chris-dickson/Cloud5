@@ -53,6 +53,7 @@ var Cloud5 = function(attributes) {
     this._onWordOut = null;
     this._onWordClick = null;
 	this._layout = null;
+    this._layouter = null;
     this._renderInfo = null;
 
 	_.extend(this,attributes);
@@ -462,7 +463,7 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 	},
 
     layout : function(handler) {
-        this._layout = handler;
+        this._layouter = handler;
         return this;
     },
 
@@ -495,7 +496,7 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 		this._layout = new Layout(layoutAttributes)
 			.canvas(this._canvas)
 			.words(this._words)
-            .layouter(this._layout)
+            .layouter(this._layouter)
 			.onWordOver(this._onWordOver)
 			.onWordOut(this._onWordOut)
             .onWordClick(this._onWordClick);
