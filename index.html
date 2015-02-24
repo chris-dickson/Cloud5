@@ -45,16 +45,27 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#gettingstarted">Getting Started</a>
+                    <a href="#overview">Getting Started</a>
+                </li>
+
+                <li>
+                    <a href="#gettingstarted">Features</a>
                 </li>
                 <li>
                     <a href="#examples">Examples</a>
+                    <a href="#basicexample" class="subnav">Basic</a>
+                    <a href="#events" class="subnav">Events</a>
+                    <a href="#customLayouts" class="subnav">Custom Layouts</a>
+                    <a href="#masking" class="subnav">Masking</a>
                 </li>
                 <li>
                     <a href="#demo">Demo</a>
                 </li>
                 <li>
                     <a href="#contact">Contact</a>
+                </li>
+                <li>
+                    <a href="#licence">Licence</a>
                 </li>
             </ul>
         </div>
@@ -68,16 +79,23 @@
                         <h1>Cloud5</h1>
                         <h4>Cloud5 is an entirely client-side Javascript library for rendering beautiful word clouds using HTML5 Canvas.</h4>
 
-
+                        <h3 id="overview">Overview</h3>
+                        <p>Unlike other word cloud libraries that rely on a server, Cloud5 runs entirely within your web browser.   No backend necessary.</p>
+                        <p>Features:</p>
+                        <ul>
+                            <li>Custom Layouts</li>
+                            <li>Mouse Events</li>
+                            <li>Image Masking</li>
+                            <li>Mobile Support</li>
+                        </ul>
 
                         <h3 id="gettingstarted">Getting Started</h3>
-                        <p>Unlike other word cloud libraries that rely on a server, Cloud5 runs entirely within your web browser.   No backend necessary.</p>
                         <p>You can <a href="dist/Cloud5.min.js">download the minified Javascript library here</a> or the <a href="dist/Cloud5.js">unminified version.</a></p>
                         <p>To build from source code, please visit the <a href="https://github.com/chris-dickson/Cloud5">Cloud5 Github Page</a> and follow the instructions listed.</p>
                         <p>To start generating word clouds, simply include the source file in your webpage.</p>
 
                         <h3 id="examples">Examples</h3>
-                        <h4>Basic Example</h4>
+                        <h4 id="basicexample">Basic Example</h4>
                         <p>We will be using the text from <a href="http://www.americanrhetoric.com/speeches/jfkinaugural.htm">John F. Kennedy's Inaugural Address in 1961</a>.  By default, we strip punctuation from the text string and convert all strings to lowercase.</p>
                         <pre class="prettyprint">
 var text = // a big text string
@@ -91,7 +109,7 @@ var cloud = new Cloud5()
 
 
 
-                        <h4>Events</h4>
+                        <h4 id="events">Events</h4>
                         <pre class="prettyprint">
 var text = // a big text string
 var cloud = new Cloud5()
@@ -176,7 +194,7 @@ cloud.layout(customLayouter);
                         <div style="clear:both"/>
                         <p>Left: CBC Reporters, Right: Pierre Trudeau</p>
 
-                        <h4>Masking</h4>
+                        <h4 id="masking">Masking</h4>
                         <p>We can provide an image that will act as a mask for the word cloud.   Any pixel that has it's alpha > 0 will be a valid word location.</p>
                         <pre class="prettyprint">
 var cloud = new Cloud5()
@@ -253,9 +271,34 @@ var cloud = new Cloud5()
                                     <canvas id="myCanvas" width="500" height="300"></canvas>
                                 </div>
                             </div>
-                        <!-- <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a> -->
+
+
                         <h3 id="contact">Contact</h3>
                         <p><a href="mailto:cloudfive.js@gmail.com">cloudfive.js@gmail.com</a></p>
+
+                        <h3 id="licence">Licence</h3>
+                        <p>Cloud5 is licenced under the MIT Licence</p>
+
+                        <p>Copyright (c) 2015 Chris Dickson</p>
+
+                        <p>Permission is hereby granted, free of charge, to any person obtaining a copy
+                        of this software and associated documentation files (the "Software"), to deal
+                        in the Software without restriction, including without limitation the rights
+                        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+                        copies of the Software, and to permit persons to whom the Software is
+                        furnished to do so, subject to the following conditions:</p>
+
+                        <p>The above copyright notice and this permission notice shall be included in
+                        all copies or substantial portions of the Software.</p>
+
+                        <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+                        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+                        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+                        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+                        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+                        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+                        THE SOFTWARE.
+                        </p>
                     </div>
                 </div>
             </div>

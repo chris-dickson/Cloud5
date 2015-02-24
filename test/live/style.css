@@ -25,3 +25,8 @@ p {
     min-width: 300px;
     min-height:200px
 }
+
+.subnav {
+    font-size: small;
+    margin-left: 15px;
+}
