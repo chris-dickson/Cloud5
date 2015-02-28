@@ -6,8 +6,6 @@ var gulp = require('gulp'),
     rename = require('gulp-rename'),
 	connect = require('connect'),
 	http = require('http'),
-	livereload = require('gulp-livereload'),
-	connectreload = require('connect-livereload'),
 	serveStatic = require('serve-static');
 
 
@@ -20,7 +18,6 @@ var config = {
 
 gulp.task('server', function() {
 	var app = connect()
-		.use(connectreload({ port: config.livereloadPort }))
 		.use('/dist', serveStatic('dist'))
 		.use('/test', serveStatic('test'))
 		.use('/examples', serveStatic('examples'))
