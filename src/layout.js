@@ -84,11 +84,7 @@ Layout.prototype = _.extend(Layout.prototype, {
             var minY = renderInfo.y + renderInfo.bb.offsetY;
             var maxX = minX + renderInfo.bb.width;
             var maxY = minY + renderInfo.bb.height;
-            if (minX <= x && x <= maxX && minY <= y && y <= maxY) {
-                return true;
-            } else {
-                return false;
-            }
+            return (minX <= x && x <= maxX && minY <= y && y <= maxY);
         });
 
         // Sort by size
@@ -300,8 +296,7 @@ Layout.prototype = _.extend(Layout.prototype, {
 				var t = (that._words[word] - minCount)/(maxCount-minCount);
 				var fontSize =_.step(minFontSize,maxFontSize,t);
 
-				var bitmap = that._textBitmapper.create(word,fontSize,that.font || 'Calibri');
-				that._renderInfo[word] = bitmap;
+                that._renderInfo[word] = that._textBitmapper.create(word,fontSize,that.font || 'Calibri');
 				that._renderInfo[word].count = that._words[word];
 				that._renderInfo[word].minCount = minCount;
 				that._renderInfo[word].maxCount = maxCount;
@@ -394,7 +389,6 @@ Layout.prototype = _.extend(Layout.prototype, {
 
 		this._canvas.onmousemove = onMouseMove;
         this._canvas.onclick = onMouseClick;
-
 
 		return that._renderInfo;
 	}

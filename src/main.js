@@ -91,10 +91,12 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
             this._canvas.width = cWidth;
             this._canvas.height = cHeight;
             this._canvas.style.width = cssWidth + 'px';
-            this._canvas.style.height = cssHeight + 'px;'
+            this._canvas.style.height = cssHeight + 'px';
 			this._width = cWidth;
 			this._height = cHeight;
 
+			var ctx = this._canvas.getContext('2d');
+			ctx.clearRect(0,0,this._width,this._height);
 
             this._highlightCanvas = document.createElement('canvas');
             this._highlightCanvas.width = this._canvas.width;
@@ -243,8 +245,12 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
 
 	clear : function() {
 		var ctx = this._canvas.getContext('2d');
-		ctx.fillStyle = this._backgroundFill || 'white';
-		ctx.fillRect(0,0,this._width,this._height);
+		ctx.clearRect(0,0,this._width,this._height);
+
+		if(this._highlightCanvas) {
+			var highlightCtx = this._highlightCanvas.getContext('2d');
+			highlightCtx.clearRect(0, 0, this._highlightCanvas.width, this._highlightCanvas.height);
+		}
 	},
 
 	/**
@@ -302,8 +308,7 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
                 if (that._stopWords[word] || word === '') {
                     return;
                 }
-                var count = wordMap[word] ? wordMap[word] : 1;
-                that._words[word] = count;
+				that._words[word] = wordMap[word] ? wordMap[word] : 1;
             });
             return this;
         } else {
@@ -319,7 +324,7 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
         words.forEach(function(word) {
             that._highlightedWords[word] = color;
         });
-        this._updateHightlight();
+        this._updateHighlight();
     },
 
     unhighlight : function(words) {
@@ -334,10 +339,10 @@ Cloud5.prototype = _.extend(Cloud5.prototype, {
                 delete that._highlightedWords[word]
             });
         }
-        this._updateHightlight();
+        this._updateHighlight();
     },
 
-    _updateHightlight : function() {
+    _updateHighlight : function() {
         var that = this;
         var highlightCtx = this._highlightCanvas.getContext('2d');
         highlightCtx.clearRect(0,0,this._highlightCanvas.width,this._highlightCanvas.height);

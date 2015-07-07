@@ -135,7 +135,7 @@ TextBitmap.prototype = _.extend(TextBitmap.prototype, {
 			ctx.strokeRect(textRenderX + bbOffsetX, textRenderY + bbOffsetY, bbWidth, bbHeight);
 		}
 
-		var renderInfo = {
+		return {
 			bb : {
 				offsetX : bbOffsetX,
 				offsetY : bbOffsetY,
@@ -146,8 +146,6 @@ TextBitmap.prototype = _.extend(TextBitmap.prototype, {
 			fontSize : fontHeight,
 			fontFamily : fontFamily
 		};
-
-		return renderInfo;
 	},
 
 	/**
