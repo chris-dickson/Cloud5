@@ -293,8 +293,13 @@ Layout.prototype = _.extend(Layout.prototype, {
 			var maxFontSize = this.maxFontSize || 200;
 			sortedWordArray.forEach(function(word) {
 
-				var t = (that._words[word] - minCount)/(maxCount-minCount);
-				var fontSize =_.step(minFontSize,maxFontSize,t);
+                var fontSize;
+                if (maxCount !== minCount) {
+                    var t = (that._words[word] - minCount)/(maxCount-minCount);
+                    fontSize =_.step(minFontSize,maxFontSize,t);
+                } else {
+                    fontSize = _.step(minFontSize,maxFontSize,0.5);
+                }
 
                 that._renderInfo[word] = that._textBitmapper.create(word,fontSize,that.font || 'Calibri');
 				that._renderInfo[word].count = that._words[word];
